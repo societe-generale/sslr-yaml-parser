@@ -1,0 +1,10 @@
+Sonar SSLR :: YAML Parser.
+Copyright 2018 Societe Generale
+mailto:vincent.girard-reydet AT socgen DOT com
+
+This product includes software developed at
+Societe Generale.
+
+This product includes software derived from material
+(c) 2008-2013, http://www.snakeyaml.org, licensed
+under the Apache version 2.0 license.

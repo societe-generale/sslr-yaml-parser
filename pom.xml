@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.sonarsource.parent</groupId>
+        <artifactId>parent</artifactId>
+        <version>52</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.societegenerale.sonar.sslr</groupId>
+    <artifactId>sslr-yaml-parser</artifactId>
+    <version>1.2.1-SNAPSHOT</version>
+
+    <name>Sonar SSLR :: YAML Parser</name>
+    <description>Parser and grammar generator toolkit for YAML-based domain languages</description>
+
+    <inceptionYear>2018</inceptionYear>
+    <organization>
+        <name>Societe Generale</name>
+	<url>http://www.societegenerale.comi/en/open-source</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>GNU LGPL 3</name>
+            <url>http://www.gnu.org/licenses/lgpl.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>vgirardreydet</id>
+            <name>Vincent Girard-Reydet</name>
+            <email>vincent.girard-reydet@socgen.com</email>
+            <organization>Societe Generale</organization>
+        </developer>
+    </developers>
+
+    <properties>
+        <!-- To configure maven-license-plugin to check license headers -->
+        <license.name>GNU LGPL v3</license.name>
+        <license.owner>Societe Generale</license.owner>
+        <license.mailto>vincent.girard-reydet AT socgen DOT com</license.mailto>
+    </properties>
+
+    <scm>
+        <url>https://github.com/societe-generale/sslr-yaml-parser</url>
+        <connection>scm:git:git@github.com:societe-generale/sslr-yaml-parser.git</connection>
+        <developerConnection>scm:git:git@github.com:societe-generale/sslr-yaml-parser.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.org/societe-generale/sslr-yaml-parser</url>
+    </ciManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.sonarsource.sslr</groupId>
+            <artifactId>sslr-core</artifactId>
+	    <version>1.23</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonarsource.sslr</groupId>
+            <artifactId>sslr-xpath</artifactId>
+	    <version>1.23</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+	    <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+	    <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+	    <version>22.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+	    <artifactId>assertj-core</artifactId>
+	    <version>3.6.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+	    <version>4.12</version>
+	    <scope>test</scope>
+        </dependency>
+        <!-- must appear AFTER junit otherwise junit sees wrong version of Hamcrest -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+	    <version>1.10.19</version>
+	    <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <localCheckout>true</localCheckout>
+                    <pushChanges>false</pushChanges>
+                    <mavenExecutorId>forked-path</mavenExecutorId>
+                    <preparationGoals>clean install</preparationGoals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
