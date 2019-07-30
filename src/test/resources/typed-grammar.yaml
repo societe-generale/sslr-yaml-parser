@@ -1,0 +1,18 @@
+type: [type1, type2]
+array:
+  - floating: 1.1
+  - floating: 1.2
+leaf:
+  in: leaf2
+  floating: 3.1415
+child-a:
+  floating: 3.1415
+child-b:
+  floating: 0.001
+  children:
+  - floating: 0.002
+  - floating: 0.003
+x-extension:
+  'a property':
+  - value 1
+  - value 2
