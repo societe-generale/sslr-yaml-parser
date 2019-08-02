@@ -213,6 +213,8 @@ public abstract class JsonNode extends AstNode {
 
   /**
    * Get the list of property nodes for this node, if the node represents an object. Else returns an empty collection.
+   * Similar to Map.entrySet(), where the collection of JsonNode's are the root property nodes.
+   *
    * @return the list of nodes representing the values of the properties, or the empty list if this node is not an object
    */
   public Collection<JsonNode> properties() {

@@ -43,7 +43,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_self() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anything());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "some scalar");
@@ -55,7 +55,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_property() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: some scalar");
@@ -69,7 +69,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_nested_property() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1:\n  p2: some scalar");
@@ -83,7 +83,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_array_element() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyArray());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "[ 1, 2, 3 ]");
@@ -96,7 +96,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_nested_array_element() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: [ 1, 2, 3 ]");
@@ -109,7 +109,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_key_from_value() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: some scalar");
@@ -122,7 +122,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_value_from_key() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: some scalar");
@@ -136,7 +136,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_value_from_property() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: some scalar");
@@ -150,7 +150,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_key_from_property() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: some scalar");
@@ -164,7 +164,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_key_from_key() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: some scalar");
@@ -178,7 +178,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_value_from_value() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: some scalar");
@@ -192,7 +192,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_all_properties() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: a\np2: b\np3: c");
@@ -204,7 +204,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_all_properties_by_map() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: a\np2: b\np3: c");
@@ -221,7 +221,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_transform_all_properties() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "p1: a\np2: b\np3: c");
@@ -237,7 +237,7 @@ public class JsonNodeTest {
   }
   @Test
   public void can_get_all_items() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyArray());
     b.setRootRule(ROOT);
     JsonNode node = parseText(b, "[ a, b, c ]");
@@ -249,7 +249,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_items_in_inline_array() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.setRootRule(ROOT);
     b.rule(ROOT).is(b.object(
         b.mandatoryProperty("p1", b.array(b.string()))));
@@ -262,7 +262,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_element_in_inline_array() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.setRootRule(ROOT);
     b.rule(ROOT).is(b.object(
         b.mandatoryProperty("p1", b.array(b.string()))));
@@ -275,7 +275,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_properties_in_inline_object() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.setRootRule(ROOT);
     b.rule(ROOT).is(b.object(
         b.mandatoryProperty("p1", b.object(b.patternProperty(".*", b.string())))));
@@ -288,7 +288,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_property_in_inline_object() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.setRootRule(ROOT);
     b.rule(ROOT).is(b.object(
         b.mandatoryProperty("p1", b.object(b.patternProperty(".*", b.string())))));
@@ -301,7 +301,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_get_properties_as_map() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
 
@@ -314,7 +314,7 @@ public class JsonNodeTest {
 
   @Test
   public void can_resolve_references() {
-    YamlGrammarBuilder b = new YamlGrammarBuilder();
+    DefaultGrammarBuilder b = new DefaultGrammarBuilder();
     b.rule(ROOT).is(b.anyObject());
     b.setRootRule(ROOT);
 
@@ -329,7 +329,7 @@ public class JsonNodeTest {
     return n -> assertEquals(value, n.getTokenValue(), value);
   }
 
-  private JsonNode parseText(YamlGrammarBuilder b, String s) {
+  private JsonNode parseText(DefaultGrammarBuilder b, String s) {
     YamlParser parser = YamlParser.builder().withCharset(Charset.forName("UTF-8")).withGrammar(b).build();
     return parser.parse(s);
   }

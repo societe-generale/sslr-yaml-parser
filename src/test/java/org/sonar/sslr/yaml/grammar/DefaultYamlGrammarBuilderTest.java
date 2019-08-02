@@ -35,14 +35,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.sonar.sslr.yaml.grammar.YamlGrammarBuilderTest.TestGrammar.CHILD1;
-import static org.sonar.sslr.yaml.grammar.YamlGrammarBuilderTest.TestGrammar.CHILD2;
-import static org.sonar.sslr.yaml.grammar.YamlGrammarBuilderTest.TestGrammar.ROOT;
+import static org.sonar.sslr.yaml.grammar.DefaultYamlGrammarBuilderTest.TestGrammar.CHILD1;
+import static org.sonar.sslr.yaml.grammar.DefaultYamlGrammarBuilderTest.TestGrammar.CHILD2;
+import static org.sonar.sslr.yaml.grammar.DefaultYamlGrammarBuilderTest.TestGrammar.ROOT;
 
-public class YamlGrammarBuilderTest {
+public class DefaultYamlGrammarBuilderTest {
 
-  private YamlGrammarBuilder b;
-  private YamlGrammarBuilder yb;
+  private DefaultGrammarBuilder b;
+  private DefaultGrammarBuilder yb;
   private List<ValidationIssue> issues;
 
   @Before
@@ -199,7 +199,7 @@ public class YamlGrammarBuilderTest {
 
   @Before
   public void prepareBuilders() {
-    b = new YamlGrammarBuilder();
+    b = new DefaultGrammarBuilder();
     yb = b;
   }
 
@@ -417,13 +417,13 @@ public class YamlGrammarBuilderTest {
     return e.getMessage().split("\n")[0];
   }
 
-  private JsonNode parseDocument(YamlGrammarBuilder b, String s) {
+  private JsonNode parseDocument(DefaultGrammarBuilder b, String s) {
     YamlParser parser = YamlParser.builder().withCharset(Charset.forName("UTF-8")).withGrammar(b).build();
     URL resource = this.getClass().getResource(s);
     return parser.parse(new File(resource.getFile()));
   }
 
-  private JsonNode parseText(YamlGrammarBuilder b, String s) {
+  private JsonNode parseText(DefaultGrammarBuilder b, String s) {
     YamlParser parser = YamlParser.builder().withCharset(Charset.forName("UTF-8")).withGrammar(b).withStrictValidation(true).build();
     JsonNode parse = parser.parse(s);
     this.issues = parser.getIssues();

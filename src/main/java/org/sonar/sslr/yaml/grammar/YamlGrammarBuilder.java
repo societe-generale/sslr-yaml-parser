@@ -19,27 +19,8 @@
  */
 package org.sonar.sslr.yaml.grammar;
 
-import com.sonar.sslr.api.TokenType;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import org.sonar.sslr.grammar.GrammarException;
 import org.sonar.sslr.grammar.GrammarRuleKey;
-import org.sonar.sslr.yaml.grammar.impl.AlwaysTrueValidation;
-import org.sonar.sslr.yaml.grammar.impl.ArrayValidation;
-import org.sonar.sslr.yaml.grammar.impl.BooleanValidation;
-import org.sonar.sslr.yaml.grammar.impl.FirstOfValidation;
-import org.sonar.sslr.yaml.grammar.impl.FloatValidation;
-import org.sonar.sslr.yaml.grammar.impl.IntegerValidation;
-import org.sonar.sslr.yaml.grammar.impl.NodeTypeValidation;
-import org.sonar.sslr.yaml.grammar.impl.ObjectValidation;
-import org.sonar.sslr.yaml.grammar.impl.PropertyDescriptionImpl;
 import org.sonar.sslr.yaml.grammar.impl.RuleDefinition;
-import org.sonar.sslr.yaml.grammar.impl.TokenTypeValidation;
-import org.sonar.sslr.yaml.grammar.impl.TokenValueValidation;
-import org.sonar.sslr.yaml.snakeyaml.parser.Tokens;
-
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.SCALAR;
 
 /**
  * A builder for creating <a href="http://en.wikipedia.org/wiki/Parsing_expression_grammar">Parsing Expression Grammars</a>
@@ -52,10 +33,7 @@ import static org.sonar.sslr.yaml.grammar.YamlGrammar.SCALAR;
  * <li>String</li>
  * </ul>
  */
-public class YamlGrammarBuilder {
-  private final Map<GrammarRuleKey, RuleDefinition> definitions = new HashMap<>();
-  private GrammarRuleKey rootRuleKey;
-
+public interface YamlGrammarBuilder {
   /**
    * Matches an object whose properties match the provided {@link #property(String, Object)} sub-expressions.
    * During the execution of this expression on an object, parser will try to match every property with one of the
@@ -67,48 +45,26 @@ public class YamlGrammarBuilder {
    * @param rest rest of sub-expressions
    * @return the built rule
    */
-  public ValidationRule object(PropertyDescription first, PropertyDescription second, PropertyDescription... rest) {
-    ObjectValidation masterRule = new ObjectValidation();
-    masterRule.addProperty(first);
-    masterRule.addProperty(second);
-    for (PropertyDescription otherRule : rest) {
-      masterRule.addProperty(otherRule);
-    }
-    return masterRule;
-  }
+  ValidationRule object(PropertyDescription first, PropertyDescription second, PropertyDescription... rest);
 
   /**
    * Matches an object. For more details, see {@link #object(PropertyDescription, PropertyDescription, PropertyDescription...)}.
    * @param rule the description of the properties to match
    * @return the built rule
    */
-  public ValidationRule object(PropertyDescription rule) {
-    ObjectValidation masterRule = new ObjectValidation();
-    masterRule.addProperty(rule);
-    return masterRule;
-  }
+  ValidationRule object(PropertyDescription rule);
 
   /**
    * Matches any YAML object. Equivalent for {@code object(patternProperty(".*", anything()))}.
    * @return the built rule
    */
-  public ValidationRule anyObject() {
-    ObjectValidation validation = new ObjectValidation();
-    validation.addProperty(patternProperty(".*", new AlwaysTrueValidation()));
-    return validation;
-  }
+  ValidationRule anyObject();
 
   /**
    * Matches any valid YAML content. Equivalent for {@code firstOf(scalar(), anyArray(), anyObject())}.
    * @return the built rule
    */
-  public ValidationRule anything() {
-    return firstOf(
-        SCALAR,
-        anyArray(),
-        anyObject()
-    );
-  }
+  ValidationRule anything();
 
   /**
    * Creates a parsing expression - "array".
@@ -118,9 +74,7 @@ public class YamlGrammarBuilder {
    * @param rule the sub-expression
    * @return the built rule
    */
-  public ValidationRule array(Object rule) {
-    return new ArrayValidation(convertToRule(rule));
-  }
+  ValidationRule array(Object rule);
 
   /**
    * Creates a parsing expression - "any array".
@@ -128,9 +82,7 @@ public class YamlGrammarBuilder {
    * {@code array(anything())}.
    * @return the built rule
    */
-  public ValidationRule anyArray() {
-    return new ArrayValidation(new AlwaysTrueValidation());
-  }
+  ValidationRule anyArray();
 
   /**
    * Describes an optional property that can appear in an {@link #object(PropertyDescription)}.
@@ -138,9 +90,7 @@ public class YamlGrammarBuilder {
    * @param rule the type of the property (can be any valid rule)
    * @return the built rule
    */
-  public PropertyDescription property(String key, Object rule) {
-    return new PropertyDescriptionImpl(key, false, false, false, convertToRule(rule));
-  }
+  PropertyDescription property(String key, Object rule);
 
   /**
    * Describes a mandatory property that can appear in an {@link #object(PropertyDescription)}.
@@ -148,9 +98,7 @@ public class YamlGrammarBuilder {
    * @param rule the type of the property (can be any valid rule)
    * @return the built rule
    */
-  public PropertyDescription mandatoryProperty(String key, Object rule) {
-    return new PropertyDescriptionImpl(key, false, true, false, convertToRule(rule));
-  }
+  PropertyDescription mandatoryProperty(String key, Object rule);
 
   /**
    * Describes a rule to match properties by name in an {@link #object(PropertyDescription)}. When an object's property
@@ -164,9 +112,7 @@ public class YamlGrammarBuilder {
    * @param rule the sub-expression
    * @return the built rule
    */
-  public PropertyDescription patternProperty(String pattern, Object rule) {
-    return new PropertyDescriptionImpl(pattern, true, false, false, convertToRule(rule));
-  }
+  PropertyDescription patternProperty(String pattern, Object rule);
 
   /**
    * Describes a mandatory property that can appear in an {@link #object(PropertyDescription)}, and whose value is a
@@ -177,9 +123,7 @@ public class YamlGrammarBuilder {
    * @param rule the type of the property (can be any valid rule)
    * @return the built rule
    */
-  public PropertyDescription discriminant(String key, Object rule) {
-    return new PropertyDescriptionImpl(key, false, true, true, convertToRule(rule));
-  }
+  PropertyDescription discriminant(String key, Object rule);
 
   /**
    * Creates parsing expression - "first of".
@@ -193,9 +137,7 @@ public class YamlGrammarBuilder {
    * @throws IllegalArgumentException if any of given arguments is not a parsing expression
    * @return the built rule
    */
-  public ValidationRule firstOf(Object first, Object second) {
-    return new FirstOfValidation(convertToRule(first), convertToRule(second));
-  }
+  ValidationRule firstOf(Object first, Object second);
 
   /**
    * Creates parsing expression - "first of".
@@ -207,9 +149,7 @@ public class YamlGrammarBuilder {
    * @throws IllegalArgumentException if any of given arguments is not a parsing expression
    * @return the built rule
    */
-  public ValidationRule firstOf(Object first, Object second, Object... rest) {
-    return new FirstOfValidation(convertToRules(first, second, rest));
-  }
+  ValidationRule firstOf(Object first, Object second, Object... rest);
 
   /**
    * Allows to describe rule.
@@ -218,125 +158,48 @@ public class YamlGrammarBuilder {
    * @param ruleKey the key that will be used to refer to this rule in other rules
    * @return the builder, for continuation
    */
-  public GrammarRuleBuilder rule(GrammarRuleKey ruleKey) {
-    RuleDefinition rule = definitions.computeIfAbsent(ruleKey, RuleDefinition::new);
-    return new RuleBuilder(this, rule);
-  }
+  GrammarRuleBuilder rule(GrammarRuleKey ruleKey);
 
   /**
    * Allows to specify that given rule should be root for grammar.
    * @param rootRuleKey a key that needs to be declared with {@link #rule(GrammarRuleKey)} before building
    */
-  public void setRootRule(GrammarRuleKey rootRuleKey) {
-    this.rootRuleKey = rootRuleKey;
-  }
-
   /**
    * Matches any scalar.
    * @return the built rule
    */
-  public ValidationRule scalar() {
-    return new NodeTypeValidation(YamlGrammar.SCALAR);
-  }
+  ValidationRule scalar();
 
   /**
    * Matches any string scalar.
    * @return the built rule
    */
-  public ValidationRule string() {
-    return new TokenTypeValidation(Tokens.STRING, Tokens.NULL);
-  }
+  ValidationRule string();
 
   /**
    * Matches an integer scalar.
    * @return the built rule
    */
-  public Object integer() {
-    return new IntegerValidation();
-  }
+  Object integer();
 
   /**
    * Matches a boolean scalar.
    * @return the built rule
    */
-  public Object bool() {
-    return new BooleanValidation(null);
-  }
+  Object bool();
 
   /**
    * Matches a boolean scalar with a specific value.
    * @param value the exact boolean to match
    * @return the built rule
    */
-  public Object bool(boolean value) {
-    return new BooleanValidation(value);
-  }
+  Object bool(boolean value);
 
   /**
    * Matches a floating-point scalar.
    * @return the built rule
    */
-  public Object floating() {
-    return new FloatValidation();
-  }
+  Object floating();
 
-  public RuleDefinition build() {
-    return definitions.get(rootRuleKey);
-  }
-
-  private ValidationRule convertToRule(Object e) {
-    Objects.requireNonNull(e, "Validation rule can't be null");
-    final ValidationRule result;
-    if (e instanceof ValidationRule) {
-      result = (ValidationRule) e;
-    } else if (e instanceof YamlGrammar) {
-      result = new NodeTypeValidation((YamlGrammar)e);
-    } else if (e instanceof GrammarRuleKey) {
-      GrammarRuleKey ruleKey = (GrammarRuleKey) e;
-      rule(ruleKey);
-      result = definitions.get(ruleKey);
-    } else if (e instanceof TokenType) {
-      result = new TokenTypeValidation((TokenType) e);
-    } else if (e instanceof String) {
-      result = new TokenValueValidation((String) e);
-    } else {
-      throw new IllegalArgumentException("Incorrect type of validation rule: " + e.getClass().toString());
-    }
-    return result;
-  }
-
-  private ValidationRule[] convertToRules(Object e1, Object e2, Object[] rest) {
-    ValidationRule[] result = new ValidationRule[2 + rest.length];
-    result[0] = convertToRule(e1);
-    result[1] = convertToRule(e2);
-    for (int i = 0; i < rest.length; i++) {
-      result[2 + i] = convertToRule(rest[i]);
-    }
-    return result;
-  }
-
-  private static class RuleBuilder implements GrammarRuleBuilder {
-
-    private final YamlGrammarBuilder b;
-    private final RuleDefinition delegate;
-
-    public RuleBuilder(YamlGrammarBuilder b, RuleDefinition delegate) {
-      this.b = b;
-      this.delegate = delegate;
-    }
-
-    @Override
-    public GrammarRuleBuilder is(Object e) {
-      if (delegate.getValidation() != null) {
-        throw new GrammarException("The rule '" + delegate.getRuleKey() + "' has already been defined somewhere in the grammar.");
-      }
-      delegate.setValidation(b.convertToRule(e));
-      return this;
-    }
-
-    @Override
-    public void skip() {
-      delegate.skip();
-    }
-  }
+  RuleDefinition build();
 }

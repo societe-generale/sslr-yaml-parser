@@ -127,7 +127,7 @@ public class YamlParser {
       return this;
     }
 
-    public Builder withGrammar(YamlGrammarBuilder b) {
+    public Builder withGrammar(DefaultGrammarBuilder b) {
       this.rootRule = b.build();
       return this;
     }
