@@ -49,7 +49,10 @@ public class ListVisitor implements TypeVisitor {
       if (type.isArray()) {
         componentType = type.getComponentType();
       } else {
-        Type listType = Arrays.stream(type.getGenericInterfaces()).filter(i -> i.getTypeName().contains("List")).findFirst().orElseThrow(() -> new IllegalStateException("Visiting a class derived from List without a List ancestor"));
+        Type listType = Arrays.stream(type.getGenericInterfaces())
+            .filter(i -> i.getTypeName().contains("List"))
+            .findFirst()
+            .orElseThrow(() -> new GrammarGeneratorException("Class " + type + " derives from an unparameterized List."));
         componentType = ((ParameterizedType)listType).getActualTypeArguments()[0];
       }
     } else if (t instanceof GenericArrayType) {

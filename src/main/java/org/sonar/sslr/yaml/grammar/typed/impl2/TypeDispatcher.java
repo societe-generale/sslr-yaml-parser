@@ -66,7 +66,11 @@ public class TypeDispatcher implements TypeVisitor {
       if (clazz.isEnum()) {
         return factory.scalar().visit(type, annotations);
       } else if (clazz.isArray() || List.class.isAssignableFrom(clazz)) {
+        // TODO - in the case of List, we're not checking that it doesn't define any more methods...
         return factory.list().visit(clazz, annotations);
+      } else if (Map.class.isAssignableFrom(clazz)){
+        // TODO - we're not checking that it doesn't define any more methods...
+        return factory.map().visit(clazz, annotations);
       } else {
         return factory.object().visit(type, annotations);
         // 4 cases here:

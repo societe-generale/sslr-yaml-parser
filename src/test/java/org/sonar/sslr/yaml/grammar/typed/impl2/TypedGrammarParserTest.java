@@ -59,7 +59,7 @@ public class TypedGrammarParserTest {
   interface Child extends Resolvable<Child> {
     @Mandatory
     Float floating();
-    Map<String, String> details();
+    Map<String, List<String>> details();
     List<Child> children();
   }
 
@@ -83,10 +83,14 @@ public class TypedGrammarParserTest {
     type2,
     type3
   }
+  interface MapOfPossibleTypes extends Map<String, PossibleTypes> {}
   interface RootType {
     Child[] array();
 
     HierarchyBase leaf();
+
+    ListOfPossibleTypes listType();
+    MapOfPossibleTypes mapType();
 
     @Mandatory
     @Choice(classes={PossibleTypes.class,ListOfPossibleTypes.class})

@@ -162,6 +162,15 @@ public class TypeDispatcherTest {
     }
 
     @Test
+    public void dispatches_objects_derived_from_maps_to_object() {
+      Object result = new TypeDispatcher(f).visit(MapOfInts.class);
+
+      assertThat(result).isSameAs(VISITOR_TOKEN);
+      verify(f).map();
+      verify(v).visit(MapOfInts.class);
+    }
+
+    @Test
     public void dispatches_maps_of_collections_with_correct_generic_type() {
       Object result = new TypeDispatcher(f).visit(TypeTestUtils.returnTypeFromMethod(WithMaps.class, "list_integer"));
 
@@ -226,15 +235,6 @@ public class TypeDispatcherTest {
       assertThat(result).isSameAs(VISITOR_TOKEN);
       verify(f).object();
       verify(v).visit(RawRule.class);
-    }
-
-    @Test
-    public void dispatches_objects_derived_from_maps_to_object() {
-      Object result = new TypeDispatcher(f).visit(MapOfInts.class);
-
-      assertThat(result).isSameAs(VISITOR_TOKEN);
-      verify(f).object();
-      verify(v).visit(MapOfInts.class);
     }
   }
 

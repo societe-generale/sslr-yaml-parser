@@ -9,6 +9,10 @@ child-a:
   floating: 3.1415
 child-b:
   floating: 0.001
+  details:
+    'detail a':
+      - element 1
+      - element 2
   children:
   - floating: 0.002
   - $ref: '#/child-a'
