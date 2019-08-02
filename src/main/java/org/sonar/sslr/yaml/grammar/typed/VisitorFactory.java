@@ -46,4 +46,6 @@ public interface VisitorFactory {
   TypeVisitor choice();
 
   TypeVisitor array();
+
+  TypeVisitor resolvable();
 }

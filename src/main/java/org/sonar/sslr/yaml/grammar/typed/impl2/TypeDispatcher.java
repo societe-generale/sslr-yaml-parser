@@ -31,6 +31,7 @@ import org.sonar.sslr.yaml.grammar.typed.Choice;
 import org.sonar.sslr.yaml.grammar.typed.DiscriminantValue;
 import org.sonar.sslr.yaml.grammar.typed.Discriminated;
 import org.sonar.sslr.yaml.grammar.typed.GrammarGeneratorException;
+import org.sonar.sslr.yaml.grammar.typed.Resolvable;
 import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 import org.sonar.sslr.yaml.grammar.typed.VisitorFactory;
 
@@ -42,7 +43,9 @@ public class TypeDispatcher implements TypeVisitor {
   }
 
   public Object visit(Type type, Annotation... annotations) {
-    if (hasChoice(annotations) || hasDiscriminantValue(annotations) || hasChoice(type) || hasDiscriminated(type)) {
+    if(type == Resolvable.class) {
+      return factory.resolvable().visit(type, annotations);
+    } else if (hasChoice(annotations) || hasDiscriminantValue(annotations) || hasChoice(type) || hasDiscriminated(type)) {
       return factory.choice().visit(type, annotations);
     } else if (type == String.class) {
       return factory.scalar().visit(type, annotations);

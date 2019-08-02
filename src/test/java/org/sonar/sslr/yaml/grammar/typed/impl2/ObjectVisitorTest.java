@@ -35,6 +35,7 @@ import org.sonar.sslr.yaml.grammar.typed.GrammarGeneratorException;
 import org.sonar.sslr.yaml.grammar.typed.Key;
 import org.sonar.sslr.yaml.grammar.typed.Mandatory;
 import org.sonar.sslr.yaml.grammar.typed.Pattern;
+import org.sonar.sslr.yaml.grammar.typed.Resolvable;
 import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +43,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -190,6 +192,30 @@ public class ObjectVisitorTest {
     visitor.visit(HierarchyRoot.class);
   }
 
+  @Test
+  public void generates_choice_for_resolvable_type() {
+    TypeTestUtils.returnTypeNameWhenVisitingWith(dispatcher);
+
+    visitor.visit(WithResolvable.class);
+
+    // getName() because Resolvable is sent to the dispatcher
+    verify(builder).firstOf(Resolvable.class.getName(), context.makeTypeKey(WithResolvable.class));
+    verify(builder).rule(context.makeTypeKey(WithResolvable.class));
+    verify(builder).property("value", "java.lang.String");
+  }
+
+  @Test
+  public void generates_choice_for_resolvable_even_when_type_already_seen() {
+    TypeTestUtils.returnTypeNameWhenVisitingWith(dispatcher);
+    GrammarRuleKey typeKey = context.makeTypeKey(WithResolvable.class);
+    context.add(typeKey);
+
+    visitor.visit(WithResolvable.class);
+
+    verify(builder).firstOf(Resolvable.class.getName(), typeKey);
+    verify(builder, never()).rule(typeKey);
+  }
+
   interface BasicObject {
     String string_scalar();
     List<String> string_list();
@@ -251,6 +277,10 @@ public class ObjectVisitorTest {
   public interface WrongPatternType {
     @Pattern("^x-.*")
     BasicObject bad_key_type();
+  }
+
+  public interface WithResolvable extends Resolvable<WithResolvable> {
+    String value();
   }
 
   private static YamlGrammarBuilder makeGrammarBuilder() {

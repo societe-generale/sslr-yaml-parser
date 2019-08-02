@@ -11,7 +11,7 @@ child-b:
   floating: 0.001
   children:
   - floating: 0.002
-  - floating: 0.003
+  - $ref: '#/child-a'
 x-extension:
   'a property':
   - value 1

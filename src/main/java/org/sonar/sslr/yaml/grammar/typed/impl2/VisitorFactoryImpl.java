@@ -62,6 +62,11 @@ public class VisitorFactoryImpl implements VisitorFactory {
     return null;
   }
 
+  @Override
+  public TypeVisitor resolvable() {
+    return new ResolvableVisitor(builder, context);
+  }
+
   public void setDispatcher(TypeDispatcher dispatcher) {
     this.dispatcher = dispatcher;
   }

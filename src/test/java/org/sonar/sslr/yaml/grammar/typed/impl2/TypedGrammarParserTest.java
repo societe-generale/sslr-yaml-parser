@@ -34,6 +34,7 @@ import org.sonar.sslr.yaml.grammar.typed.Discriminated;
 import org.sonar.sslr.yaml.grammar.typed.Key;
 import org.sonar.sslr.yaml.grammar.typed.Mandatory;
 import org.sonar.sslr.yaml.grammar.typed.Pattern;
+import org.sonar.sslr.yaml.grammar.typed.Resolvable;
 
 import static org.junit.Assert.assertTrue;
 
@@ -55,7 +56,7 @@ public class TypedGrammarParserTest {
     assertTrue(parsed.is(rootKey));
   }
 
-  interface Child {
+  interface Child extends Resolvable<Child> {
     @Mandatory
     Float floating();
     Map<String, String> details();

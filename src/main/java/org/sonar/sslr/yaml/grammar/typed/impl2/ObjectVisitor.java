@@ -61,13 +61,23 @@ public class ObjectVisitor implements TypeVisitor {
   public Object visit(Type t, Annotation... annotations) {
     type = validateType(t);
     GrammarRuleKey ruleKey = context.makeTypeKey(type);
-    if (!context.add(ruleKey)) {
+
+    boolean isResolvable = isResolvable(type);
+    boolean alreadySeen = !context.add(ruleKey);
+    if (alreadySeen && !isResolvable) {
       return ruleKey;
     }
-    GrammarRuleBuilder rule = builder.rule(ruleKey);
-    List<PropertyDescription> properties = parseMethodsInAllInterfaces();
-    declarePropertiesInObject(rule, properties);
-    return ruleKey;
+    if (!alreadySeen) {
+      GrammarRuleBuilder rule = builder.rule(ruleKey);
+      List<PropertyDescription> properties = parseMethodsInAllInterfaces();
+      declarePropertiesInObject(rule, properties);
+    }
+    if (isResolvable) {
+      Object resolvable = typeDispatcher.visit(Resolvable.class);
+      return builder.firstOf(resolvable, ruleKey);
+    } else {
+      return ruleKey;
+    }
   }
 
   private Class<?> validateType(Type t) {
@@ -196,6 +206,10 @@ public class ObjectVisitor implements TypeVisitor {
       propertyName = key.value();
     }
     return propertyName;
+  }
+
+  private static boolean isResolvable(Class<?> type) {
+    return Resolvable.class.isAssignableFrom(type);
   }
 
   private static boolean hasGetterProfile(Method method) {
