@@ -30,6 +30,8 @@ public interface ValidationRule {
    */
   boolean visit(JsonNode node, Context context);
 
+  String describe();
+
   interface Context {
     /**
      * Records a violation of a rule with an ERROR level. Captured errors fail the validation in strict mode.

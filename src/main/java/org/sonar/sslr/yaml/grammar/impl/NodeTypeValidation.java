@@ -47,7 +47,12 @@ public class NodeTypeValidation extends ValidationBase {
     if (types.size() == 1) {
       return types.stream().map(Object::toString).findFirst().orElse("");
     } else {
-      return "One of " + types;
+      return "one of " + types;
     }
+  }
+
+  @Override
+  public String describe() {
+    return toString();
   }
 }

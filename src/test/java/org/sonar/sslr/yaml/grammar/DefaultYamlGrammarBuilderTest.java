@@ -290,7 +290,7 @@ public class DefaultYamlGrammarBuilderTest {
     } catch (ValidationException ex) {
       assertSingleCause(ex, e -> {
         assertThat(e.getLine()).isEqualTo(3);
-        assertThat(firstLineOf(e)).isEqualTo("Expected: One of [STRING, NULL], got: BLOCK_MAPPING");
+        assertThat(firstLineOf(e)).isEqualTo("Expected: one of [STRING, NULL], got: BLOCK_MAPPING");
       });
     }
   }

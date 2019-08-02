@@ -64,6 +64,21 @@ public class PropertyDescriptionImpl implements PropertyDescription {
   }
 
   @Override
+  public String describe() {
+    StringBuilder b = new StringBuilder();
+    b.append("  ");
+    b.append(key);
+    if (mandatory) {
+      b.append("[M]");
+    }
+    if (discriminant) {
+      b.append("[D]");
+    }
+    b.append(" => ").append(delegate instanceof RuleDefinition ? ((RuleDefinition) delegate).getRuleKey() : delegate.describe());
+    return b.toString();
+  }
+
+  @Override
   public String toString() {
     return delegate.toString();
   }

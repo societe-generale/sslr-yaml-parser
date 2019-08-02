@@ -32,4 +32,9 @@ public class AlwaysTrueValidation implements ValidationRule {
   public String toString() {
     return "anything";
   }
+
+  @Override
+  public String describe() {
+    return toString();
+  }
 }

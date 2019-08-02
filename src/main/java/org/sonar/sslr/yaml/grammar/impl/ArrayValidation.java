@@ -52,6 +52,11 @@ public class ArrayValidation extends ValidationBase {
 
   @Override
   public String toString() {
-    return "array of " + elementValidation.toString();
+    return "array of <" + elementValidation.toString() + ">";
+  }
+
+  @Override
+  public String describe() {
+    return "array of <" + (elementValidation instanceof RuleDefinition ? ((RuleDefinition) elementValidation).getRuleKey() : elementValidation.describe()) + ">";
   }
 }

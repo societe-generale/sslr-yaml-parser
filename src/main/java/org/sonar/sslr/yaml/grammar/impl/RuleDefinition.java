@@ -63,6 +63,15 @@ public class RuleDefinition implements GrammarRuleKey, ValidationRule {
     return getName();
   }
 
+  public String describe() {
+    String result = validation.describe();
+    if (astNodeSkippingPolicy == AlwaysSkipFromAst.INSTANCE) {
+      return "[S] " + result;
+    } else {
+      return result;
+    }
+  }
+
   @Override
   public boolean visit(JsonNode node, Context context) {
     boolean valid = validation.visit(node, context);

@@ -20,9 +20,14 @@
 package org.sonar.sslr.yaml.grammar;
 
 import com.sonar.sslr.api.TokenType;
+import java.io.PrintStream;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.sonar.sslr.grammar.GrammarException;
 import org.sonar.sslr.grammar.GrammarRuleKey;
 import org.sonar.sslr.yaml.grammar.impl.AlwaysTrueValidation;
@@ -45,7 +50,7 @@ import static org.sonar.sslr.yaml.grammar.YamlGrammar.SCALAR;
  * Implementation of YamlGrammarBuilder for grammars built from DSL.
  */
 public class DefaultGrammarBuilder implements YamlGrammarBuilder {
-  private final Map<GrammarRuleKey, RuleDefinition> definitions = new HashMap<>();
+  private final Map<GrammarRuleKey, RuleDefinition> definitions = new LinkedHashMap<>();
   private GrammarRuleKey rootRuleKey;
 
   /**
@@ -228,6 +233,16 @@ public class DefaultGrammarBuilder implements YamlGrammarBuilder {
   @Override
   public RuleDefinition build() {
     return definitions.get(rootRuleKey);
+  }
+
+  public void print(PrintStream s) {
+    SortedSet<GrammarRuleKey> keys = new TreeSet<>(Comparator.comparing(Object::toString));
+    keys.addAll(definitions.keySet());
+    for (GrammarRuleKey key : keys) {
+      RuleDefinition value = definitions.get(key);
+      s.println(key + " ::= " + value.describe());
+    }
+
   }
 
   private ValidationRule convertToRule(Object e) {

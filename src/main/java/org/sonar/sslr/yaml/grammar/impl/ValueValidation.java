@@ -38,4 +38,8 @@ public abstract class ValueValidation extends ValidationBase {
 
   protected abstract boolean isValueValid(AstNode node, Context context);
 
+  @Override
+  public String describe() {
+    return toString();
+  }
 }

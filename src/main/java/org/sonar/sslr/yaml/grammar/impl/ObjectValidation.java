@@ -26,11 +26,12 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.sonar.sslr.yaml.grammar.JsonNode;
 import org.sonar.sslr.yaml.grammar.ParsingException;
 import org.sonar.sslr.yaml.grammar.PropertyDescription;
-import org.sonar.sslr.yaml.grammar.ValidationRule;
 import org.sonar.sslr.yaml.grammar.YamlGrammar;
 import org.sonar.sslr.yaml.snakeyaml.parser.Tokens;
 
@@ -48,7 +49,7 @@ import static org.sonar.sslr.yaml.grammar.YamlGrammar.BLOCK_MAPPING;
 public class ObjectValidation extends ValidationBase {
   private Set<String> mandatoryProperties = new HashSet<>();
   private Map<String, PropertyDescription> namedRules = new HashMap<>();
-  private Map<String, ValidationRule> patternRules = new LinkedHashMap<>();
+  private Map<String, PropertyDescription> patternRules = new LinkedHashMap<>();
 
   public void addProperty(PropertyDescription rule) {
     if (rule.isPattern()) {
@@ -116,7 +117,7 @@ public class ObjectValidation extends ValidationBase {
       boolean valid = rule.visit(value, context);
       return valid || !rule.isDiscriminant();
     } else  {
-      for (Map.Entry<String, ValidationRule> entry : patternRules.entrySet()) {
+      for (Map.Entry<String, PropertyDescription> entry : patternRules.entrySet()) {
         if (Pattern.matches(entry.getKey(), key)) {
           entry.getValue().visit(value, context);
           return true;
@@ -125,5 +126,24 @@ public class ObjectValidation extends ValidationBase {
       context.recordWarning(keyNode, "Unexpected property: \"" + key + "\"");
       return true; // non-blocking: the object still has the correct expected structure
     }
+  }
+
+  @Override
+  public String describe() {
+    StringBuilder b = new StringBuilder();
+    b.append("object {").append("\n");
+    SortedSet<String> keys = new TreeSet<>(namedRules.keySet());
+    for (String key : keys) {
+      PropertyDescription value = namedRules.get(key);
+      b.append(value instanceof RuleDefinition ? ((RuleDefinition) value).getRuleKey() : value.describe()).append("\n");
+    }
+    keys.clear();
+    keys.addAll(patternRules.keySet());
+    for (String key : keys) {
+      PropertyDescription value = patternRules.get(key);
+      b.append(value.describe()).append("\n");
+    }
+    b.append("}");
+    return b.toString();
   }
 }
