@@ -41,6 +41,16 @@ public class VisitorContext implements TypeVisitor.Context {
     return keys.add(ruleKey);
   }
 
+  @Override
+  public void declareMethod(String name) {
+
+  }
+
+  @Override
+  public void declareTypes(Class types) {
+
+  }
+
   private static class StringRuleKey implements GrammarRuleKey {
     private final String name;
 

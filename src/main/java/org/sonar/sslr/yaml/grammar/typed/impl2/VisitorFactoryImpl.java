@@ -19,17 +19,20 @@
  */
 package org.sonar.sslr.yaml.grammar.typed.impl2;
 
-import org.sonar.sslr.yaml.grammar.DefaultGrammarBuilder;
+import org.sonar.sslr.yaml.grammar.YamlGrammarBuilder;
 import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 import org.sonar.sslr.yaml.grammar.typed.VisitorFactory;
+import org.sonar.sslr.yaml.grammar.typed.proxy.ProxyFactoryGenerator;
 
 public class VisitorFactoryImpl implements VisitorFactory {
-  private final DefaultGrammarBuilder builder;
-  private final TypeVisitor.Context context = new VisitorContext();
+  private final YamlGrammarBuilder builder;
+  private final TypeVisitor.Context context;
   private TypeDispatcher dispatcher;
 
-  public VisitorFactoryImpl(DefaultGrammarBuilder builder) {
+  public VisitorFactoryImpl(ProxyFactoryGenerator builder) {
     this.builder = builder;
+    this.context = builder;
+    builder.setContextDelegate(new VisitorContext());
   }
 
   @Override
@@ -44,12 +47,12 @@ public class VisitorFactoryImpl implements VisitorFactory {
 
   @Override
   public TypeVisitor map() {
-    return new MapVisitor(builder, dispatcher);
+    return new MapVisitor(builder, dispatcher, context);
   }
 
   @Override
   public TypeVisitor list() {
-    return new ListVisitor(builder, dispatcher);
+    return new ListVisitor(builder, dispatcher, context);
   }
 
   @Override

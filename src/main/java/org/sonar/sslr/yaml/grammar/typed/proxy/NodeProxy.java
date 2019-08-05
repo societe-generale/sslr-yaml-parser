@@ -17,18 +17,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.experimental.type;
+package org.sonar.sslr.yaml.grammar.typed.proxy;
 
-import org.sonar.sslr.yaml.grammar.experimental.proxy.ProxyFactory;
+import org.sonar.sslr.yaml.grammar.JsonNode;
 
-public class TypeDescriptor {
-  private ProxyFactory proxyFactory;
-
-  public ProxyFactory getProxyFactory() {
-    return proxyFactory;
-  }
-
-  public void setProxyFactory(ProxyFactory proxyFactory) {
-    this.proxyFactory = proxyFactory;
-  }
+public interface NodeProxy {
+  JsonNode getNode();
 }

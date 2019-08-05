@@ -424,7 +424,7 @@ public class DefaultYamlGrammarBuilderTest {
   }
 
   private JsonNode parseText(DefaultGrammarBuilder b, String s) {
-    YamlParser parser = YamlParser.builder().withCharset(Charset.forName("UTF-8")).withGrammar(b).withStrictValidation(true).build();
+    YamlParser parser = YamlParser.builder().withCharset(Charset.forName("UTF-8")).withStrictValidation(true).withGrammar(b).build();
     JsonNode parse = parser.parse(s);
     this.issues = parser.getIssues();
     return parse;

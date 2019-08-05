@@ -23,10 +23,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
-import org.sonar.sslr.grammar.GrammarRuleKey;
-import org.sonar.sslr.yaml.grammar.DefaultGrammarBuilder;
 import org.sonar.sslr.yaml.grammar.JsonNode;
-import org.sonar.sslr.yaml.grammar.YamlParser;
 import org.sonar.sslr.yaml.grammar.typed.Choice;
 import org.sonar.sslr.yaml.grammar.typed.Discriminant;
 import org.sonar.sslr.yaml.grammar.typed.DiscriminantValue;
@@ -35,29 +32,24 @@ import org.sonar.sslr.yaml.grammar.typed.Key;
 import org.sonar.sslr.yaml.grammar.typed.Mandatory;
 import org.sonar.sslr.yaml.grammar.typed.Pattern;
 import org.sonar.sslr.yaml.grammar.typed.Resolvable;
+import org.sonar.sslr.yaml.grammar.typed.TypedYamlParser;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TypedGrammarParserTest {
   @Test
   //@Ignore
   public void can_generate_grammar_and_parse_file() {
-    DefaultGrammarBuilder builder = new DefaultGrammarBuilder();
-    VisitorFactoryImpl factory = new VisitorFactoryImpl(builder);
-    TypeDispatcher dispatcher = new TypeDispatcher(factory);
-    factory.setDispatcher(dispatcher);
+    TypedYamlParser<RootType> parser = TypedYamlParser.builder(RootType.class).withStrictValidation(true).build();
+    RootType rootType = parser.parse(new File("src/test/resources/typed-grammar.yaml"));
+    //assertTrue(parsed.is(rootKey));
 
-    GrammarRuleKey rootKey = (GrammarRuleKey) dispatcher.visit(RootType.class);
-    builder.setRootRule(rootKey);
-    builder.print(System.out);
-
-    YamlParser parser = YamlParser.builder().withGrammar(builder).withStrictValidation(true).build();
-    JsonNode parsed = parser.parse(new File("src/test/resources/typed-grammar.yaml"));
-    assertTrue(parsed.is(rootKey));
+    assertThat(rootType.children().get("child-b").resolve().details().get("detail a").get(1)).isEqualTo("element 2");
+    assertThat(rootType.leaf()).isInstanceOf(Leaf2.class);
   }
 
-  interface Child extends Resolvable<Child> {
-    @Mandatory
+  interface Child extends Resolvable<Child>  {
+    //@Mandatory
     Float floating();
     Map<String, List<String>> details();
     List<Child> children();

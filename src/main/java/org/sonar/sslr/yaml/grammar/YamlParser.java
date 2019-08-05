@@ -111,7 +111,7 @@ public class YamlParser {
     return (JsonNode) JsonAstCreator.create(Machine.parse(tokens, g), tokens).getFirstChild();
   }
 
-  public static final class Builder {
+  public static final class Builder implements BuilderCompletion {
 
     private Charset charset = Charset.defaultCharset();
     private RuleDefinition rootRule;
@@ -127,12 +127,12 @@ public class YamlParser {
       return this;
     }
 
-    public Builder withGrammar(DefaultGrammarBuilder b) {
+    public BuilderCompletion withGrammar(YamlGrammarBuilder b) {
       this.rootRule = b.build();
       return this;
     }
 
-    public Builder withGrammar(RuleDefinition rule) {
+    public BuilderCompletion withGrammar(RuleDefinition rule) {
       this.rootRule = rule;
       return this;
     }
@@ -140,6 +140,9 @@ public class YamlParser {
     public YamlParser build() {
       return new YamlParser(this.charset, rootRule, strict);
     }
+  }
 
+  public interface BuilderCompletion {
+    YamlParser build();
   }
 }

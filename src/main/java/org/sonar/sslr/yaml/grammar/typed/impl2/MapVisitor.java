@@ -20,10 +20,10 @@
 package org.sonar.sslr.yaml.grammar.typed.impl2;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Map;
 import org.sonar.sslr.yaml.grammar.YamlGrammarBuilder;
 import org.sonar.sslr.yaml.grammar.typed.GrammarGeneratorException;
 import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
@@ -31,10 +31,12 @@ import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 public class MapVisitor implements TypeVisitor {
   private final YamlGrammarBuilder builder;
   private final TypeVisitor typeDispatcher;
+  private Context context;
 
-  public MapVisitor(YamlGrammarBuilder builder, TypeVisitor typeDispatcher) {
+  public MapVisitor(YamlGrammarBuilder builder, TypeVisitor typeDispatcher, Context context) {
     this.builder = builder;
     this.typeDispatcher = typeDispatcher;
+    this.context = context;
   }
 
   @Override
@@ -54,6 +56,8 @@ public class MapVisitor implements TypeVisitor {
       throw new IllegalStateException("Visiting type " + t + " as map but it doesn't seem to be a map!");
     }
     Object child = typeDispatcher.visit(componentType, annotations);
+    context.declareMethod("get");
+    context.declareTypes(Map.class);
     return builder.object(builder.patternProperty(".*", child));
   }
 

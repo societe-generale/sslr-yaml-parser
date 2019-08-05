@@ -22,15 +22,15 @@ package org.sonar.sslr.yaml.grammar.typed.impl2;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import org.sonar.sslr.grammar.GrammarRuleKey;
-import org.sonar.sslr.yaml.grammar.DefaultGrammarBuilder;
+import org.sonar.sslr.yaml.grammar.YamlGrammarBuilder;
 import org.sonar.sslr.yaml.grammar.typed.Resolvable;
 import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 
 public class ResolvableVisitor implements TypeVisitor {
-  private final DefaultGrammarBuilder builder;
+  private final YamlGrammarBuilder builder;
   private final Context context;
 
-  public ResolvableVisitor(DefaultGrammarBuilder builder, Context context) {
+  public ResolvableVisitor(YamlGrammarBuilder builder, Context context) {
     this.builder = builder;
     this.context = context;
   }
@@ -41,6 +41,8 @@ public class ResolvableVisitor implements TypeVisitor {
     if (!context.add(ruleKey)) {
       return ruleKey;
     }
+    context.declareTypes((Class) type);
+    context.declareMethod("$ref");
     builder.rule(ruleKey).is(builder.object(builder.mandatoryProperty("$ref", builder.string())));
     return ruleKey;
   }

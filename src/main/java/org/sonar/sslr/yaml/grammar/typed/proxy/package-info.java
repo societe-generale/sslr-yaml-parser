@@ -17,27 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed.impl;
+@ParametersAreNonnullByDefault
+package org.sonar.sslr.yaml.grammar.typed.proxy;
 
-class DefaultTypeVisitor<T, R> implements GrammarGenerator.TypeVisitor<T,R> {
-
-  @Override
-  public R visitMap(T definition) {
-    return null;
-  }
-
-  @Override
-  public R visitListOrArray(T definition) {
-    return null;
-  }
-
-  @Override
-  public R visitScalar(T definition) {
-    return null;
-  }
-
-  @Override
-  public R visitObject(T definition) {
-    return null;
-  }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

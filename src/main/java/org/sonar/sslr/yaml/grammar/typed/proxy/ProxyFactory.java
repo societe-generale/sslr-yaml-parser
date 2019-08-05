@@ -17,7 +17,11 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed.impl;
+package org.sonar.sslr.yaml.grammar.typed.proxy;
 
-public class ClassInspector {
+import java.lang.reflect.InvocationHandler;
+import org.sonar.sslr.yaml.grammar.JsonNode;
+
+public interface ProxyFactory {
+  Object makeProxyFor(JsonNode node);
 }

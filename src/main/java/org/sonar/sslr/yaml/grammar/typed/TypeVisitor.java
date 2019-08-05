@@ -34,5 +34,9 @@ public interface TypeVisitor {
       * Registers the key in the context. Returns {@code false} if the key was already registered.
       */
      boolean add(GrammarRuleKey ruleKey);
+
+     void declareMethod(String name);
+
+     void declareTypes(Class types);
    }
 }

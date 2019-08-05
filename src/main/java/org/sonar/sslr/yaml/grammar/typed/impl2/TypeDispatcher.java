@@ -43,9 +43,9 @@ public class TypeDispatcher implements TypeVisitor {
   }
 
   public Object visit(Type type, Annotation... annotations) {
-    if(type == Resolvable.class) {
+    /*if(type == Resolvable.class) {
       return factory.resolvable().visit(type, annotations);
-    } else if (hasChoice(annotations) || hasDiscriminantValue(annotations) || hasChoice(type) || hasDiscriminated(type)) {
+    } else*/ if (hasChoice(annotations) || hasDiscriminantValue(annotations) || hasChoice(type) || hasDiscriminated(type)) {
       return factory.choice().visit(type, annotations);
     } else if (type == String.class) {
       return factory.scalar().visit(type, annotations);

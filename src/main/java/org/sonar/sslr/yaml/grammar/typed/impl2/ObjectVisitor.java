@@ -64,20 +64,13 @@ public class ObjectVisitor implements TypeVisitor {
 
     boolean isResolvable = isResolvable(type);
     boolean alreadySeen = !context.add(ruleKey);
-    if (alreadySeen && !isResolvable) {
+    if (alreadySeen /*&& !isResolvable*/) {
       return ruleKey;
     }
-    if (!alreadySeen) {
-      GrammarRuleBuilder rule = builder.rule(ruleKey);
-      List<PropertyDescription> properties = parseMethodsInAllInterfaces();
-      declarePropertiesInObject(rule, properties);
-    }
-    if (isResolvable) {
-      Object resolvable = typeDispatcher.visit(Resolvable.class);
-      return builder.firstOf(resolvable, ruleKey);
-    } else {
-      return ruleKey;
-    }
+    GrammarRuleBuilder rule = builder.rule(ruleKey);
+    List<PropertyDescription> properties = parseMethodsInAllInterfaces();
+    declarePropertiesInObject(rule, properties);
+    return ruleKey;
   }
 
   private Class<?> validateType(Type t) {
@@ -102,6 +95,7 @@ public class ObjectVisitor implements TypeVisitor {
 
   private void declarePropertiesInObject(GrammarRuleBuilder rule, List<PropertyDescription> properties) {
     ValidationRule objectRule;
+    context.declareTypes(type);
     if (properties.size() == 1) {
       objectRule = builder.object(properties.get(0));
     } else if (properties.size() == 2) {
@@ -144,6 +138,7 @@ public class ObjectVisitor implements TypeVisitor {
 
     String propertyName = computePropertyName(method);
     boolean isMandatory = method.getAnnotation(Mandatory.class) != null;
+    context.declareMethod(method.getName());
     if (isDiscriminant) {
       return builder.discriminant(propertyName, visited);
     } else if (isMandatory) {
@@ -218,6 +213,6 @@ public class ObjectVisitor implements TypeVisitor {
 
   private static boolean isNotFromCollectionOrResolvable(Method method) {
     Class<?> parent = method.getDeclaringClass();
-    return parent != Collection.class && parent != Iterable.class && parent != List.class && parent != Map.class && parent != Resolvable.class;
+    return parent != Collection.class && parent != Iterable.class && parent != List.class && parent != Map.class && (parent != Resolvable.class || method.getName().equals("$ref"));
   }
 }

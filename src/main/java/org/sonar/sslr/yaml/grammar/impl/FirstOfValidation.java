@@ -29,19 +29,31 @@ import org.sonar.sslr.yaml.grammar.ValidationRule;
 
 public class FirstOfValidation implements ValidationRule {
   private final ValidationRule[] delegates;
+  private Observer observer = new Observer() {
+    @Override
+    public void onObserved(JsonNode node, int i) {
+
+    }
+  };
 
   public FirstOfValidation(ValidationRule... delegates) {
     this.delegates = delegates;
   }
 
+  public void setObserver(Observer observer) {
+    this.observer = observer;
+  }
+
   @Override
   public boolean visit(JsonNode node, Context context) {
     List<ValidationIssue> errorMessages = new ArrayList<>();
+    int i = 0;
     for (ValidationRule delegate : delegates) {
       context.capture();
       boolean valid = delegate.visit(node, context);
       List<ValidationIssue> issues = context.captured();
       if (valid) {
+        observer.onObserved(node, i);
         for (ValidationIssue issue : issues) {
           context.recordWarning(issue.getNode(), issue.getMessage());
         }
@@ -49,6 +61,7 @@ public class FirstOfValidation implements ValidationRule {
       } else {
         errorMessages.add(new ValidationIssue(node, "Not " + delegate, ValidationIssue.Severity.WARNING, issues));
       }
+      i++;
     }
     String pointer = node.key().stringValue();
     if (!pointer.isEmpty()) {
@@ -66,11 +79,15 @@ public class FirstOfValidation implements ValidationRule {
     Arrays.stream(delegates).map(d -> d instanceof RuleDefinition ? ((RuleDefinition) d).getRuleKey().toString() : d.describe()).forEach(joiner::add);
     b.append(joiner.toString());
     b.append("]");
-    return toString();
+    return b.toString();
   }
 
   @Override
   public String toString() {
     return "one of " + Arrays.toString(delegates);
+  }
+
+  public interface Observer {
+    void onObserved(JsonNode node, int i);
   }
 }

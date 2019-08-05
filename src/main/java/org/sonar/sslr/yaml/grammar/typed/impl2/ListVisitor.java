@@ -24,7 +24,6 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.List;
 import org.sonar.sslr.yaml.grammar.YamlGrammarBuilder;
 import org.sonar.sslr.yaml.grammar.typed.GrammarGeneratorException;
 import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
@@ -32,20 +31,25 @@ import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 public class ListVisitor implements TypeVisitor {
   private final YamlGrammarBuilder builder;
   private final TypeVisitor typeDispatcher;
+  private Context context;
 
-  public ListVisitor(YamlGrammarBuilder builder, TypeVisitor typeDispatcher) {
+  public ListVisitor(YamlGrammarBuilder builder, TypeVisitor typeDispatcher, Context context) {
     this.builder = builder;
     this.typeDispatcher = typeDispatcher;
+    this.context = context;
   }
 
   @Override
   public Object visit(Type t, Annotation... annotations) {
     Type componentType;
+    Class declaredType;
     if (t instanceof ParameterizedType) {
       ParameterizedType type = (ParameterizedType) t;
+      declaredType = (Class)type.getRawType();
       componentType = type.getActualTypeArguments()[0];
     } else if (t instanceof Class) {
       Class type = (Class) t;
+      declaredType = type;
       if (type.isArray()) {
         componentType = type.getComponentType();
       } else {
@@ -58,10 +62,13 @@ public class ListVisitor implements TypeVisitor {
     } else if (t instanceof GenericArrayType) {
       GenericArrayType type = (GenericArrayType) t;
       componentType = type.getGenericComponentType();
+      // TODO
+      declaredType = Object.class;
     } else {
       throw new IllegalStateException("Visiting type " + t + " as list but it doesn't seem to be a list or array!");
     }
     Object child = typeDispatcher.visit(componentType, annotations);
+    context.declareTypes(declaredType);
     return builder.array(child);
   }
 
