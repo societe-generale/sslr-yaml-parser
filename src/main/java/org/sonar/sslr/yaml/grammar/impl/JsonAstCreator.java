@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar;
+package org.sonar.sslr.yaml.grammar.impl;
 
 import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.sonar.sslr.internal.matchers.ParseNode;
-import org.sonar.sslr.yaml.grammar.impl.SyntaxNode;
+import org.sonar.sslr.yaml.grammar.JsonNode;
+import org.sonar.sslr.yaml.grammar.YamlGrammar;
 
 public class JsonAstCreator {
 

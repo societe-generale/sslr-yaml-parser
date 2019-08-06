@@ -36,6 +36,8 @@ import org.sonar.sslr.internal.vm.CompilableGrammarRule;
 import org.sonar.sslr.internal.vm.CompiledGrammar;
 import org.sonar.sslr.internal.vm.Machine;
 import org.sonar.sslr.internal.vm.MutableGrammarCompiler;
+import org.sonar.sslr.yaml.grammar.impl.GrammarValidator;
+import org.sonar.sslr.yaml.grammar.impl.JsonAstCreator;
 import org.sonar.sslr.yaml.grammar.impl.RuleDefinition;
 import org.sonar.sslr.yaml.grammar.impl.SyntaxNode;
 import org.sonar.sslr.yaml.snakeyaml.parser.Lexer;

@@ -1,6 +1,6 @@
 /*
  * Sonar SSLR :: YAML Parser
- * Copyright (C) 2018-2018 Societe Generale
+ * Copyright (C) 2018-2019 Societe Generale
  * vincent.girard-reydet AT socgen DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed.impl2;
+package org.sonar.sslr.yaml.grammar.typed.parser;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -28,7 +28,6 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.mockito.stubbing.Answer;
 import org.sonar.sslr.grammar.GrammarRuleKey;
-import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;

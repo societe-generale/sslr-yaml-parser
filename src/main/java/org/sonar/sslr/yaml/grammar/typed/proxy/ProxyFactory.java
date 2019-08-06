@@ -1,6 +1,6 @@
 /*
  * Sonar SSLR :: YAML Parser
- * Copyright (C) 2018-2018 Societe Generale
+ * Copyright (C) 2018-2019 Societe Generale
  * vincent.girard-reydet AT socgen DOT com
  *
  * This program is free software; you can redistribute it and/or

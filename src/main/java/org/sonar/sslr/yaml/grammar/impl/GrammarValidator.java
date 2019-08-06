@@ -17,19 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed.proxy;
+package org.sonar.sslr.yaml.grammar.impl;
 
+import java.util.List;
 import org.sonar.sslr.yaml.grammar.JsonNode;
+import org.sonar.sslr.yaml.grammar.ValidationIssue;
 
-public class ListProxyFactory implements ProxyFactory {
-  private final ProxyFactory elementFactory;
-
-  public ListProxyFactory(ProxyFactory elementFactory) {
-    this.elementFactory = elementFactory;
-  }
-
-  @Override
-  public Object makeProxyFor(JsonNode node) {
-    return new ListProxy(node, elementFactory);
-  }
+public interface GrammarValidator {
+  List<ValidationIssue> validate(JsonNode node);
 }

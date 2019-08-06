@@ -1,6 +1,6 @@
 /*
  * Sonar SSLR :: YAML Parser
- * Copyright (C) 2018-2018 Societe Generale
+ * Copyright (C) 2018-2019 Societe Generale
  * vincent.girard-reydet AT socgen DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -17,26 +17,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed;
+package org.sonar.sslr.yaml.grammar.typed.parser;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import org.sonar.sslr.grammar.GrammarRuleKey;
+public interface VisitorFactory {
+  TypeVisitor object();
 
-@FunctionalInterface
-public interface TypeVisitor {
-   Object visit(Type type, Annotation... annotations);
+  TypeVisitor scalar();
 
-   public interface Context {
-     GrammarRuleKey makeTypeKey(Type type);
+  TypeVisitor map();
 
-     /**
-      * Registers the key in the context. Returns {@code false} if the key was already registered.
-      */
-     boolean add(GrammarRuleKey ruleKey);
+  TypeVisitor list();
 
-     void declareMethod(String name);
+  TypeVisitor choice();
 
-     void declareTypes(Class types);
-   }
+  TypeVisitor array();
+
+  TypeVisitor resolvable();
 }

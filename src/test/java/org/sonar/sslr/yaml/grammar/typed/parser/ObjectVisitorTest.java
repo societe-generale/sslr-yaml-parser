@@ -1,6 +1,6 @@
 /*
  * Sonar SSLR :: YAML Parser
- * Copyright (C) 2018-2018 Societe Generale
+ * Copyright (C) 2018-2019 Societe Generale
  * vincent.girard-reydet AT socgen DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed.impl2;
+package org.sonar.sslr.yaml.grammar.typed.parser;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -36,7 +36,6 @@ import org.sonar.sslr.yaml.grammar.typed.Key;
 import org.sonar.sslr.yaml.grammar.typed.Mandatory;
 import org.sonar.sslr.yaml.grammar.typed.Pattern;
 import org.sonar.sslr.yaml.grammar.typed.Resolvable;
-import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -47,8 +46,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.sonar.sslr.yaml.grammar.typed.impl2.TypeTestUtils.annotationFromMethod;
-import static org.sonar.sslr.yaml.grammar.typed.impl2.TypeTestUtils.returnTypeFromMethod;
+import static org.sonar.sslr.yaml.grammar.typed.parser.TypeTestUtils.annotationFromMethod;
+import static org.sonar.sslr.yaml.grammar.typed.parser.TypeTestUtils.returnTypeFromMethod;
 
 public class ObjectVisitorTest {
 
@@ -193,27 +192,14 @@ public class ObjectVisitorTest {
   }
 
   @Test
-  public void generates_choice_for_resolvable_type() {
+  public void generates_object_for_resolvable_type() {
     TypeTestUtils.returnTypeNameWhenVisitingWith(dispatcher);
 
     visitor.visit(WithResolvable.class);
 
     // getName() because Resolvable is sent to the dispatcher
-    verify(builder).firstOf(Resolvable.class.getName(), context.makeTypeKey(WithResolvable.class));
     verify(builder).rule(context.makeTypeKey(WithResolvable.class));
     verify(builder).property("value", "java.lang.String");
-  }
-
-  @Test
-  public void generates_choice_for_resolvable_even_when_type_already_seen() {
-    TypeTestUtils.returnTypeNameWhenVisitingWith(dispatcher);
-    GrammarRuleKey typeKey = context.makeTypeKey(WithResolvable.class);
-    context.add(typeKey);
-
-    visitor.visit(WithResolvable.class);
-
-    verify(builder).firstOf(Resolvable.class.getName(), typeKey);
-    verify(builder, never()).rule(typeKey);
   }
 
   interface BasicObject {

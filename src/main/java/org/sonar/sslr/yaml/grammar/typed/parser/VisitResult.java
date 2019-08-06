@@ -1,6 +1,6 @@
 /*
  * Sonar SSLR :: YAML Parser
- * Copyright (C) 2018-2018 Societe Generale
+ * Copyright (C) 2018-2019 Societe Generale
  * vincent.girard-reydet AT socgen DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -17,35 +17,30 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed;
+package org.sonar.sslr.yaml.grammar.typed.parser;
 
-public interface VisitorFactory {
-  /**
-   * Named object
-   */
-  TypeVisitor object();
+public class VisitResult {
+  private final Object value;
+  private final boolean accepted;
 
-  /**
-   * Scalar types
-   */
-  TypeVisitor scalar();
+  private VisitResult(Object value, boolean accepted) {
+    this.value = value;
+    this.accepted = accepted;
+  }
 
-  /**
-   * Anonymous objects (generates no rule key)
-   */
-  TypeVisitor map();
+  public Object getValue() {
+    return value;
+  }
 
-  /**
-   * List
-   */
-  TypeVisitor list();
+  public boolean isAccepted() {
+    return accepted;
+  }
 
-  /**
-   * Any raw Object annotated with @Choice
-   */
-  TypeVisitor choice();
+  public static VisitResult of(Object value) {
+    return new VisitResult(value, true);
+  }
 
-  TypeVisitor array();
-
-  TypeVisitor resolvable();
+  public static VisitResult rejected() {
+    return new VisitResult(null, false);
+  }
 }

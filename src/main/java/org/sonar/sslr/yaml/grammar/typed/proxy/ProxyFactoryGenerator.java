@@ -1,3 +1,22 @@
+/*
+ * Sonar SSLR :: YAML Parser
+ * Copyright (C) 2018-2019 Societe Generale
+ * vincent.girard-reydet AT socgen DOT com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package org.sonar.sslr.yaml.grammar.typed.proxy;
 
 import com.google.common.collect.Lists;
@@ -16,8 +35,7 @@ import org.sonar.sslr.yaml.grammar.ValidationRule;
 import org.sonar.sslr.yaml.grammar.YamlGrammarBuilder;
 import org.sonar.sslr.yaml.grammar.impl.FirstOfValidation;
 import org.sonar.sslr.yaml.grammar.impl.RuleDefinition;
-import org.sonar.sslr.yaml.grammar.typed.Resolvable;
-import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
+import org.sonar.sslr.yaml.grammar.typed.parser.TypeVisitor;
 
 public class ProxyFactoryGenerator implements YamlGrammarBuilder, TypeVisitor.Context {
   private final Deque<ProxyFactory> currentStack = new ArrayDeque<>();
@@ -138,11 +156,9 @@ public class ProxyFactoryGenerator implements YamlGrammarBuilder, TypeVisitor.Co
 
   @Override
   public ValidationRule firstOf(Object first, Object second) {
-    List<ProxyFactory> factories = Lists.newArrayList(popOrDelegate(first), popOrDelegate(second));
-    ChoiceProxyFactory factory = new ChoiceProxyFactory(factories);
-    currentStack.push(factory);
     FirstOfValidation validationRule = (FirstOfValidation) delegate.firstOf(first, second);
-    validationRule.setObserver(factory);
+    List<ProxyFactory> factories = Lists.newArrayList(popOrDelegate(first), popOrDelegate(second));
+    generateFirstOfProxyFactory(validationRule, factories);
     return validationRule;
   }
 
@@ -150,11 +166,20 @@ public class ProxyFactoryGenerator implements YamlGrammarBuilder, TypeVisitor.Co
   public ValidationRule firstOf(Object first, Object second, Object... rest) {
     List<ProxyFactory> factories = Lists.newArrayList(popOrDelegate(first), popOrDelegate(second));
     Arrays.stream(rest).forEach(o -> factories.add(this.popOrDelegate(o)));
-    ChoiceProxyFactory factory = new ChoiceProxyFactory(factories);
-    currentStack.push(factory);
     FirstOfValidation validationRule = (FirstOfValidation) delegate.firstOf(first, second, rest);
-    validationRule.setObserver(factory);
+    generateFirstOfProxyFactory(validationRule, factories);
     return validationRule;
+  }
+
+  private void generateFirstOfProxyFactory(FirstOfValidation validationRule, List<ProxyFactory> factories) {
+    Class[] peeked = typeStack.peek();
+    if (peeked != null && peeked[0].isEnum()) {
+      currentStack.push(new EnumProxyFactory(peeked[0]));
+    } else {
+      ChoiceProxyFactory factory = new ChoiceProxyFactory(factories);
+      currentStack.push(factory);
+      validationRule.setObserver(factory);
+    }
   }
 
   @Override

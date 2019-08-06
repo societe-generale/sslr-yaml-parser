@@ -17,10 +17,18 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar;
+package org.sonar.sslr.yaml.grammar.typed;
 
-import java.util.List;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import org.sonar.sslr.yaml.grammar.JsonNode;
+import org.sonar.sslr.yaml.grammar.typed.proxy.NodeProxy;
 
-public interface GrammarValidator {
-  List<ValidationIssue> validate(JsonNode node);
+public class JsonNodes {
+  public static JsonNode from(Object proxy) {
+    if (!(proxy instanceof NodeProxy)) {
+      throw new IllegalArgumentException("Class " + proxy.getClass() + " is not a Json proxy!");
+    }
+    return ((NodeProxy)proxy).getNode();
+  }
 }

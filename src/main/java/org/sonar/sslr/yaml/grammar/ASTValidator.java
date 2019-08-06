@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import org.sonar.sslr.internal.vm.lexerful.LexerfulParseErrorFormatter;
+import org.sonar.sslr.yaml.grammar.impl.GrammarValidator;
 
 public class ASTValidator implements GrammarValidator {
   private final ValidationRule rootRule;

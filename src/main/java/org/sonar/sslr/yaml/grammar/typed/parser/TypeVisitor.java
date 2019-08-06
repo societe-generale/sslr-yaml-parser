@@ -17,19 +17,28 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed.proxy;
+package org.sonar.sslr.yaml.grammar.typed.parser;
 
-import org.sonar.sslr.yaml.grammar.JsonNode;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import org.sonar.sslr.grammar.GrammarRuleKey;
 
-public class ListProxyFactory implements ProxyFactory {
-  private final ProxyFactory elementFactory;
+@FunctionalInterface
+public interface TypeVisitor {
+   Object visit(Type type, Annotation... annotations);
 
-  public ListProxyFactory(ProxyFactory elementFactory) {
-    this.elementFactory = elementFactory;
-  }
+   public interface Context {
+     GrammarRuleKey makeTypeKey(Type type);
 
-  @Override
-  public Object makeProxyFor(JsonNode node) {
-    return new ListProxy(node, elementFactory);
-  }
+     /**
+      * Registers the key in the context.
+      * @param  ruleKey a rule to declare
+      * @return {@code false} if the key was already registered.
+      */
+     boolean add(GrammarRuleKey ruleKey);
+
+     void declareMethod(String name);
+
+     void declareTypes(Class types);
+   }
 }

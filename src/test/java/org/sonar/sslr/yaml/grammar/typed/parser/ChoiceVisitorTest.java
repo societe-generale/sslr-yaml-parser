@@ -1,6 +1,6 @@
 /*
  * Sonar SSLR :: YAML Parser
- * Copyright (C) 2018-2018 Societe Generale
+ * Copyright (C) 2018-2019 Societe Generale
  * vincent.girard-reydet AT socgen DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.sslr.yaml.grammar.typed.impl2;
+package org.sonar.sslr.yaml.grammar.typed.parser;
 
 import java.util.List;
 import java.util.Map;
@@ -29,15 +29,12 @@ import org.sonar.sslr.grammar.GrammarRuleKey;
 import org.sonar.sslr.yaml.grammar.GrammarRuleBuilder;
 import org.sonar.sslr.yaml.grammar.JsonNode;
 import org.sonar.sslr.yaml.grammar.PropertyDescription;
-import org.sonar.sslr.yaml.grammar.ValidationRule;
 import org.sonar.sslr.yaml.grammar.YamlGrammarBuilder;
 import org.sonar.sslr.yaml.grammar.typed.Choice;
 import org.sonar.sslr.yaml.grammar.typed.Discriminant;
 import org.sonar.sslr.yaml.grammar.typed.DiscriminantValue;
 import org.sonar.sslr.yaml.grammar.typed.Discriminated;
 import org.sonar.sslr.yaml.grammar.typed.GrammarGeneratorException;
-import org.sonar.sslr.yaml.grammar.typed.TypeVisitor;
-import org.sonar.sslr.yaml.grammar.typed.impl.GrammarGenerator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -47,11 +44,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.sonar.sslr.yaml.grammar.typed.impl2.TypeTestUtils.annotationFromMethod;
-import static org.sonar.sslr.yaml.grammar.typed.impl2.TypeTestUtils.keyThatPrintsAs;
-import static org.sonar.sslr.yaml.grammar.typed.impl2.TypeTestUtils.returnTypeFromMethod;
-import static org.sonar.sslr.yaml.grammar.typed.impl2.TypeTestUtils.returnTypeNameWhenVisitingWith;
-import static org.sonar.sslr.yaml.grammar.typed.impl2.TypeTestUtils.returnTypeTransformationWhenVisitingWith;
+import static org.sonar.sslr.yaml.grammar.typed.parser.TypeTestUtils.annotationFromMethod;
+import static org.sonar.sslr.yaml.grammar.typed.parser.TypeTestUtils.keyThatPrintsAs;
+import static org.sonar.sslr.yaml.grammar.typed.parser.TypeTestUtils.returnTypeFromMethod;
+import static org.sonar.sslr.yaml.grammar.typed.parser.TypeTestUtils.returnTypeNameWhenVisitingWith;
+import static org.sonar.sslr.yaml.grammar.typed.parser.TypeTestUtils.returnTypeTransformationWhenVisitingWith;
 
 public class ChoiceVisitorTest {
   private YamlGrammarBuilder builder;
@@ -86,7 +83,7 @@ public class ChoiceVisitorTest {
   @Test
   public void throws_when_discriminated_child_doesnt_inherit_base() {
     expectedException.expect(GrammarGeneratorException.class);
-    expectedException.expectMessage("org.sonar.sslr.yaml.grammar.typed.impl2.ChoiceVisitorTest$BadHierarchyRoot references org.sonar.sslr.yaml.grammar.typed.impl2.ChoiceVisitorTest$HierarchyLeaf but is not its parent.");
+    expectedException.expectMessage("org.sonar.sslr.yaml.grammar.typed.parser.ChoiceVisitorTest$BadHierarchyRoot references org.sonar.sslr.yaml.grammar.typed.parser.ChoiceVisitorTest$HierarchyLeaf but is not its parent.");
 
     visitor.visit(BadHierarchyRoot.class);
   }
