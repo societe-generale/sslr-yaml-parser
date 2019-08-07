@@ -98,6 +98,8 @@ public enum YamlGrammar implements GrammarRuleKey {
   /**
    * Builds an SSLR-compatible grammar descriptor for YAML. It is designed to be used in conjunction with the
    * {@link org.sonar.sslr.yaml.snakeyaml.parser.Lexer}.
+   *
+   * @return a new builder with a configured YAML grammar
    */
   public static LexerfulGrammarBuilder create() {
     LexerfulGrammarBuilder b = LexerfulGrammarBuilder.create();

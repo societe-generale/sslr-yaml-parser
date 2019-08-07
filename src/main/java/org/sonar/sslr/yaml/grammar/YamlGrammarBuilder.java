@@ -65,6 +65,7 @@ public class YamlGrammarBuilder {
    * @param first first sub-expression
    * @param second second sub-expression
    * @param rest rest of sub-expressions
+   * @return the built rule
    */
   public ValidationRule object(PropertyDescription first, PropertyDescription second, PropertyDescription... rest) {
     ObjectValidation masterRule = new ObjectValidation();
@@ -79,6 +80,7 @@ public class YamlGrammarBuilder {
   /**
    * Matches an object. For more details, see {@link #object(PropertyDescription, PropertyDescription, PropertyDescription...)}.
    * @param rule the description of the properties to match
+   * @return the built rule
    */
   public ValidationRule object(PropertyDescription rule) {
     ObjectValidation masterRule = new ObjectValidation();
@@ -88,6 +90,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches any YAML object. Equivalent for {@code object(patternProperty(".*", anything()))}.
+   * @return the built rule
    */
   public ValidationRule anyObject() {
     ObjectValidation validation = new ObjectValidation();
@@ -97,6 +100,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches any valid YAML content. Equivalent for {@code firstOf(scalar(), anyArray(), anyObject())}.
+   * @return the built rule
    */
   public ValidationRule anything() {
     return firstOf(
@@ -112,6 +116,7 @@ public class YamlGrammarBuilder {
    * expression succeeds only if the sub-expression succeeds on all entries of the array.
    *
    * @param rule the sub-expression
+   * @return the built rule
    */
   public ValidationRule array(Object rule) {
     return new ArrayValidation(convertToRule(rule));
@@ -121,6 +126,7 @@ public class YamlGrammarBuilder {
    * Creates a parsing expression - "any array".
    * This expression matches any array, whatever the type of objects or the number of entries. Equivalent of
    * {@code array(anything())}.
+   * @return the built rule
    */
   public ValidationRule anyArray() {
     return new ArrayValidation(new AlwaysTrueValidation());
@@ -130,6 +136,7 @@ public class YamlGrammarBuilder {
    * Describes an optional property that can appear in an {@link #object(PropertyDescription)}.
    * @param key the key of the property
    * @param rule the type of the property (can be any valid rule)
+   * @return the built rule
    */
   public PropertyDescription property(String key, Object rule) {
     return new PropertyDescriptionImpl(key, false, false, false, convertToRule(rule));
@@ -139,6 +146,7 @@ public class YamlGrammarBuilder {
    * Describes a mandatory property that can appear in an {@link #object(PropertyDescription)}.
    * @param key the key of the property
    * @param rule the type of the property (can be any valid rule)
+   * @return the built rule
    */
   public PropertyDescription mandatoryProperty(String key, Object rule) {
     return new PropertyDescriptionImpl(key, false, true, false, convertToRule(rule));
@@ -152,8 +160,9 @@ public class YamlGrammarBuilder {
    * Be aware that in {@code object(patternProperty(".*", anything()), patternProperty("^x-.*", anything())}, the second sub-expression will
    * never be executed.
    *
-   * @param key the pattern to match against the property names
+   * @param pattern the pattern to match against the property names
    * @param rule the sub-expression
+   * @return the built rule
    */
   public PropertyDescription patternProperty(String pattern, Object rule) {
     return new PropertyDescriptionImpl(pattern, true, false, false, convertToRule(rule));
@@ -166,6 +175,7 @@ public class YamlGrammarBuilder {
    *
    * @param key the key of the property
    * @param rule the type of the property (can be any valid rule)
+   * @return the built rule
    */
   public PropertyDescription discriminant(String key, Object rule) {
     return new PropertyDescriptionImpl(key, false, true, true, convertToRule(rule));
@@ -178,9 +188,10 @@ public class YamlGrammarBuilder {
    * <p>
    * Be aware that in expression {@code firstOf("foo", firstOf("foo", "bar"))} second sub-expression will never be executed.
    *
-   * @param e1  first sub-expression
-   * @param e2  second sub-expression
+   * @param first  first sub-expression
+   * @param second  second sub-expression
    * @throws IllegalArgumentException if any of given arguments is not a parsing expression
+   * @return the built rule
    */
   public ValidationRule firstOf(Object first, Object second) {
     return new FirstOfValidation(convertToRule(first), convertToRule(second));
@@ -190,10 +201,11 @@ public class YamlGrammarBuilder {
    * Creates parsing expression - "first of".
    * See {@link #firstOf(Object, Object)} for more details.
    *
-   * @param e1  first sub-expression
-   * @param e2  second sub-expression
+   * @param first  first sub-expression
+   * @param second  second sub-expression
    * @param rest  rest of sub-expressions
    * @throws IllegalArgumentException if any of given arguments is not a parsing expression
+   * @return the built rule
    */
   public ValidationRule firstOf(Object first, Object second, Object... rest) {
     return new FirstOfValidation(convertToRules(first, second, rest));
@@ -203,6 +215,8 @@ public class YamlGrammarBuilder {
    * Allows to describe rule.
    * Result of this method should be used only for execution of methods in it, i.e. you should not save reference on it.
    * No guarantee that this method always returns the same instance for the same key of rule.
+   * @param ruleKey the key that will be used to refer to this rule in other rules
+   * @return the builder, for continuation
    */
   public GrammarRuleBuilder rule(GrammarRuleKey ruleKey) {
     RuleDefinition rule = this.definitions.get(ruleKey);
@@ -215,6 +229,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Allows to specify that given rule should be root for grammar.
+   * @param rootRuleKey a key that needs to be declared with {@link #rule(GrammarRuleKey)} before building
    */
   public void setRootRule(GrammarRuleKey rootRuleKey) {
     this.rootRuleKey = rootRuleKey;
@@ -222,6 +237,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches any scalar.
+   * @return the built rule
    */
   public ValidationRule scalar() {
     return new NodeTypeValidation(YamlGrammar.SCALAR);
@@ -229,6 +245,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches any string scalar.
+   * @return the built rule
    */
   public ValidationRule string() {
     return new TokenTypeValidation(Tokens.STRING, Tokens.NULL);
@@ -236,6 +253,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches an integer scalar.
+   * @return the built rule
    */
   public Object integer() {
     return new IntegerValidation();
@@ -243,6 +261,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches a boolean scalar.
+   * @return the built rule
    */
   public Object bool() {
     return new BooleanValidation(null);
@@ -250,6 +269,8 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches a boolean scalar with a specific value.
+   * @param value the exact boolean to match
+   * @return the built rule
    */
   public Object bool(boolean value) {
     return new BooleanValidation(value);
@@ -257,6 +278,7 @@ public class YamlGrammarBuilder {
 
   /**
    * Matches a floating-point scalar.
+   * @return the built rule
    */
   public Object floating() {
     return new FloatValidation();
