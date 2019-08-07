@@ -2,7 +2,6 @@ language: java
 sudo: false
 install: true
 jdk: openjdk11
-
 # to keep Maven local repository between builds:
 cache:
   directories:
@@ -22,6 +21,18 @@ addons:
   sonarcloud:
     organization: "societe-generale"
 
-#script: "chmod a+x ./travis.sh && ./travis.sh"
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=societe-generale_sslr-yaml-parser
+  - mvn -Pcoverage clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=societe-generale_sslr-yaml-parser
+
+before_deploy:
+  - release/createReleaseProperties.sh
+  # Install GPG secrets so that we can sign during the release
+  - echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
+  - echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
+
+deploy:
+  provider: script
+  script: mvn deploy -Dskiptests -Prelease --settings release/mvnsettings.xml -Darguments="-DskipTests"
+  skip_cleanup: true
+  on:
+    tags: true

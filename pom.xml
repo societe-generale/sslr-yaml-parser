@@ -19,7 +19,7 @@
     <inceptionYear>2018</inceptionYear>
     <organization>
         <name>Societe Generale</name>
-	<url>http://www.societegenerale.comi/en/open-source</url>
+	<url>http://www.societegenerale.com/en/open-source</url>
     </organization>
     <licenses>
         <license>
@@ -51,6 +51,17 @@
         <developerConnection>scm:git:git@github.com:societe-generale/sslr-yaml-parser.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
+    <repositories>
+        <repository>
+            <id>sonatype-releases</id>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <snapshotRepository>
@@ -129,19 +140,98 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- To manually release using mvn release:clean release:prepare, then release:perform -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.3</version>
                 <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <stagingRepository>https://oss.sonatype.org/service/local/staging/deploy/maven2</stagingRepository>
+                    <tagNameFormat>sslr_yaml_parser_@{project.version}</tagNameFormat>
                     <localCheckout>true</localCheckout>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushChanges>false</pushChanges>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
                     <mavenExecutorId>forked-path</mavenExecutorId>
-                    <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <!-- To release to Maven central -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <!-- To generate javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- To sign the artifacts -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+
+            </build>
+        </profile>
+    </profiles>
 
 </project>
