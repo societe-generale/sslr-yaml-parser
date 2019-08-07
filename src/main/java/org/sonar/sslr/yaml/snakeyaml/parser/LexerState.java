@@ -36,6 +36,7 @@ public class LexerState {
 
   /**
    * The number of unclosed '{' and '['. `flow_level == 0` means block context.
+   * @return the number
    */
   public int flowLevel() {
     return flowLevel;
@@ -51,6 +52,7 @@ public class LexerState {
 
   /**
    * The current indentation level (a column index).
+   * @return the current indentation level
    */
   public int indent() {
     return indent;
@@ -58,6 +60,7 @@ public class LexerState {
 
   /**
    * Past indentation levels.
+   * @return the new indentation level
    */
   public int popIndent() {
     indent = indents.pop();
@@ -85,6 +88,7 @@ public class LexerState {
    * In the block context, this flag also signifies if a block collection
    * may start at the current position.
    * </pre>
+   * @return {@code true} if the current context allows declaring simple keys
    */
   public boolean allowSimpleKey() {
     return allowSimpleKey;

@@ -121,9 +121,19 @@ public abstract class JsonNode extends AstNode {
 
   /**
    * Get the direct AST children, as JsonNode instead of ASTNode.
+   * @return the list of children
    */
   public final List<JsonNode> getJsonChildren() {
     return (List)getChildren();
+  }
+
+  /**
+   * Get the direct AST children matching the supplied types, as JsonNode instead of ASTNode.
+   * @param types the types of desired children
+   * @return the list of children matching the types
+   */
+  public final List<JsonNode> getJsonChildren(AstNodeType... types) {
+    return (List)getChildren(types);
   }
 
   /**
@@ -186,13 +196,6 @@ public abstract class JsonNode extends AstNode {
   }
 
   /**
-   * Get the direct AST children matching the supplied types, as JsonNode instead of ASTNode.
-   */
-  public final List<JsonNode> getJsonChildren(AstNodeType... types) {
-    return (List)getChildren(types);
-  }
-
-  /**
    * If this node is a property node, a property value node or a property key node, get the value node. Else return the
    * Missing node.
    * @return the associated value node, or the Missing node.
@@ -214,6 +217,7 @@ public abstract class JsonNode extends AstNode {
 
   /**
    * Get the list of property names for this node, if the node represents an object. Else returns an empty collection.
+   * @return the list of properties defined in this node (potentially empty)
    */
   public List<String> propertyNames() {
     return Collections.emptyList();
@@ -238,6 +242,8 @@ public abstract class JsonNode extends AstNode {
   /**
    * Get the map of property nodes for this node, if the node represents an object, and applies the supplied {@code mapper}
    * to each property node. Else returns an empty map.
+   * @param <T> the type of the generated objects
+   * @param mapper a function to apply to the nodes
    * @return the map of property nodes, indexed by property name, or the empty map if this node is not an object
    */
   public <T> Map<String, T> propertyMap(Function<JsonNode, T> mapper) {
@@ -273,6 +279,7 @@ public abstract class JsonNode extends AstNode {
 
   /**
    * Return the value of this node, if this is a scalar node.
+   * @return the value, or an empty string for non-scalars
    */
   public String stringValue() {
     return "";
@@ -280,6 +287,7 @@ public abstract class JsonNode extends AstNode {
 
   /**
    * Return the value of this node, if this is a boolean node. Else return false.
+   * @return the value, or {@code false} for non-scalars
    */
   public boolean booleanValue() {
     return false;
@@ -287,6 +295,7 @@ public abstract class JsonNode extends AstNode {
 
   /**
    * Try to parse this node's value as a float, if this is a scalar node. Else return {@code 0.0}.
+   * @return the value, or {@code 0.0} for non-scalars
    */
   public double floatValue() {
     return 0.0;
@@ -294,6 +303,7 @@ public abstract class JsonNode extends AstNode {
 
   /**
    * Try to parse this node's value as an int, if this is a scalar node. Else return {@code 0}.
+   * @return the value, or {@code 0} for non-scalars
    */
   public int intValue() {
     return 0;

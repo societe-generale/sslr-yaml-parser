@@ -19,8 +19,6 @@
  */
 package org.sonar.sslr.yaml.grammar;
 
-import com.sonar.sslr.api.AstNode;
-import com.sonar.sslr.api.AstNodeType;
 import java.util.List;
 
 public interface ValidationRule {
@@ -28,6 +26,7 @@ public interface ValidationRule {
    * Validate the supplied node.
    * @param node the node to validate
    * @param context validation context
+   * @return {@code true} if the node respects the rule
    */
   boolean visit(JsonNode node, Context context);
 
@@ -37,7 +36,6 @@ public interface ValidationRule {
      * @param node the location of the violation
      * @param message the violation description
      * @param causes any other violations that may have caused or explain this violation
-     * @return never returns a value (just provided for convenience purpose)
      * @throws ValidationException in any case
      */
     void recordFailure(JsonNode node, String message, ValidationIssue... causes) throws ValidationException;
