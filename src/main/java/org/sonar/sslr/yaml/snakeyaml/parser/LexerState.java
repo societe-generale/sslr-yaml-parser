@@ -21,17 +21,18 @@ package org.sonar.sslr.yaml.snakeyaml.parser;
 
 import com.sonar.sslr.impl.Lexer;
 import com.sonar.sslr.impl.LexerException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Stack;
 import org.sonar.sslr.channel.CodeReader;
 
 public class LexerState {
   private int flowLevel = 0;
   private boolean allowSimpleKey = true;
   private int indent = -1;
-  private Stack<Integer> indents;
+  private Deque<Integer> indents;
   private Map<Integer, SimpleKey> possibleSimpleKeys;
 
   /**
@@ -110,7 +111,7 @@ public class LexerState {
   }
 
   public LexerState() {
-    this.indents = new Stack<>();
+    this.indents = new ArrayDeque<>();
     // The order in possibleSimpleKeys is kept for nextPossibleSimpleKey()
     this.possibleSimpleKeys = new LinkedHashMap<>();
   }

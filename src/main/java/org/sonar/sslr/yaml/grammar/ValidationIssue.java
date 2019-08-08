@@ -19,9 +19,6 @@
  */
 package org.sonar.sslr.yaml.grammar;
 
-import com.google.common.collect.Lists;
-import com.sonar.sslr.api.AstNode;
-import com.sonar.sslr.api.RecognitionException;
 import java.util.Collections;
 import java.util.List;
 

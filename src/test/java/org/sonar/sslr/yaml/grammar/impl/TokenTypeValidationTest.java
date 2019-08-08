@@ -31,7 +31,10 @@ public class TokenTypeValidationTest extends ValidationTestBase {
   @Test
   public void matches_correct_token_type() {
     TokenTypeValidation validation = new TokenTypeValidation(NULL);
-    validation.visit(parseText("null"), context);
+
+    boolean valid = validation.visit(parseText("null"), context);
+
+    assertThat(valid).isTrue();
   }
 
   @Test

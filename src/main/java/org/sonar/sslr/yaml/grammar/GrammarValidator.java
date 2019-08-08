@@ -19,16 +19,8 @@
  */
 package org.sonar.sslr.yaml.grammar;
 
-import java.util.Collections;
 import java.util.List;
 
 public interface GrammarValidator {
   List<ValidationIssue> validate(JsonNode node);
-
-  GrammarValidator NULL_VALIDATOR = new GrammarValidator() {
-    @Override
-    public List<ValidationIssue> validate(JsonNode node) {
-      return Collections.emptyList();
-    }
-  };
 }

@@ -64,17 +64,15 @@ public class ValueChannel extends Channel<com.sonar.sslr.impl.Lexer> {
 
             // If this key starts a new block mapping, we need to add
             // BLOCK-MAPPING-START.
-            if (state.flowLevel() == 0) {
-                if (state.addIndent(key.getColumn())) {
-                    token = tokenBuilder
-                            .setType(Tokens.BLOCK_MAPPING_START)
-                            .setValueAndOriginalValue("{", "")
-                            .setURI(output.getURI())
-                            .setLine(key.getLine())
-                            .setColumn(key.getColumn())
-                            .build();
-                    output.addToken(token);
-                }
+            if (state.flowLevel() == 0 && state.addIndent(key.getColumn())) {
+                token = tokenBuilder
+                        .setType(Tokens.BLOCK_MAPPING_START)
+                        .setValueAndOriginalValue("{", "")
+                        .setURI(output.getURI())
+                        .setLine(key.getLine())
+                        .setColumn(key.getColumn())
+                        .build();
+                output.addToken(token);
             }
             // There cannot be two simple keys one after another.
             state.allowSimpleKey(false);
@@ -83,31 +81,26 @@ public class ValueChannel extends Channel<com.sonar.sslr.impl.Lexer> {
             // It must be a part of a complex key.
             // Block context needs additional checks. Do we really need them?
             // They will be caught by the parser anyway.
-            if (state.flowLevel() == 0) {
-
-                // We are allowed to start a complex value if and only if we can
-                // start a simple key.
-                if (!state.allowSimpleKey()) {
-                    throw new YamlLexerException(null, null, "mapping values are not allowed here",
-                            reader.getCursor());
-                }
+            // We are allowed to start a complex value if and only if we can
+            // start a simple key.
+            if (state.flowLevel() == 0 && !state.allowSimpleKey()) {
+                throw new YamlLexerException(null, null, "mapping values are not allowed here",
+                        reader.getCursor());
             }
 
             // If this value starts a new block mapping, we need to add
             // BLOCK-MAPPING-START. It will be detected as an error later by
             // the parser.
-            if (state.flowLevel() == 0) {
-                if (state.addIndent(reader.getColumnPosition())) {
-                    CodeBuffer.Cursor mark = reader.getCursor().clone();
-                    Token token = tokenBuilder
-                            .setType(Tokens.BLOCK_MAPPING_START)
-                            .setValueAndOriginalValue("{", "")
-                            .setURI(output.getURI())
-                            .setLine(mark.getLine())
-                            .setColumn(mark.getColumn())
-                            .build();
-                    output.addToken(token);
-                }
+            if (state.flowLevel() == 0 && state.addIndent(reader.getColumnPosition())) {
+                CodeBuffer.Cursor mark = reader.getCursor().clone();
+                Token token = tokenBuilder
+                        .setType(Tokens.BLOCK_MAPPING_START)
+                        .setValueAndOriginalValue("{", "")
+                        .setURI(output.getURI())
+                        .setLine(mark.getLine())
+                        .setColumn(mark.getColumn())
+                        .build();
+                output.addToken(token);
             }
 
             // Simple keys are allowed after ':' in the block context.

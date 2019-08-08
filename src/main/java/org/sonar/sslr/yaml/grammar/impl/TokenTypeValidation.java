@@ -47,7 +47,7 @@ public class TokenTypeValidation extends ValidationBase {
   @Override
   public String toString() {
     if (types.size() == 1) {
-      return types.stream().findFirst().get().toString();
+      return types.stream().map(Object::toString).findFirst().orElse("");
     } else {
       return "One of " + types;
     }

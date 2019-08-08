@@ -21,7 +21,7 @@ package org.sonar.sslr.yaml.grammar;
 
 import com.fasterxml.jackson.core.JsonPointer;
 
-public abstract class Utils {
+public class Utils {
   private Utils() {
     // Hidden utilty class constructor
   }

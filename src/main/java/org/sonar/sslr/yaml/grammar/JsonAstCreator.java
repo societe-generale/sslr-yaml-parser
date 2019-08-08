@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.sonar.sslr.internal.matchers.ParseNode;
-import org.sonar.sslr.internal.vm.lexerful.TokenTypeExpression;
 import org.sonar.sslr.yaml.grammar.impl.SyntaxNode;
 
 public class JsonAstCreator {
@@ -99,11 +98,7 @@ public class JsonAstCreator {
   private JsonNode visitTerminal(ParseNode node) {
     Token token = tokens.get(node.getStartIndex());
     TokenType type = token.getType();
-    // For compatibility with SSLR < 1.19, TokenType should be checked only for TokenTypeExpression:
-    if ((node.getMatcher() instanceof TokenTypeExpression) && type.hasToBeSkippedFromAst(null)) {
-      return null;
-    }
-    JsonNode astNode = new SyntaxNode(token.getType(), type.getName(), token);
+    JsonNode astNode = new SyntaxNode(type, type.getName(), token);
     astNode.setFromIndex(node.getStartIndex());
     astNode.setToIndex(node.getEndIndex());
     return astNode;

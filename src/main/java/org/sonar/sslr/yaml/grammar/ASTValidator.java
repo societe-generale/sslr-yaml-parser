@@ -20,11 +20,12 @@
 package org.sonar.sslr.yaml.grammar;
 
 import com.sonar.sslr.api.RecognitionException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 import org.sonar.sslr.internal.vm.lexerful.LexerfulParseErrorFormatter;
 
 public class ASTValidator implements GrammarValidator {
@@ -47,7 +48,7 @@ public class ASTValidator implements GrammarValidator {
   }
 
   public static class ContextImpl implements ValidationRule.Context {
-    private final Stack<List<ValidationIssue>> capturedErrors = new Stack<>();
+    private final Deque<List<ValidationIssue>> capturedErrors = new ArrayDeque<>();
 
     @Override
     public void recordFailure(JsonNode node, String message, ValidationIssue... causes) {

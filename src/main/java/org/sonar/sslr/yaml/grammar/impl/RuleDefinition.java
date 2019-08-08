@@ -19,7 +19,6 @@
  */
 package org.sonar.sslr.yaml.grammar.impl;
 
-import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import com.sonar.sslr.impl.ast.AlwaysSkipFromAst;
 import com.sonar.sslr.impl.ast.NeverSkipFromAst;

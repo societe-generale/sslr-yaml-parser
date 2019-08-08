@@ -41,6 +41,7 @@ import org.sonar.sslr.yaml.grammar.impl.SyntaxNode;
 import org.sonar.sslr.yaml.snakeyaml.parser.Lexer;
 
 public class YamlParser {
+  public static final GrammarValidator NULL_VALIDATOR = node -> Collections.emptyList();
   private final Charset charset;
   private final boolean strict;
   private final GrammarValidator validator;
@@ -60,7 +61,7 @@ public class YamlParser {
     if (rootRule != null) {
       this.validator = new ASTValidator(rootRule);
     } else {
-      this.validator = GrammarValidator.NULL_VALIDATOR;
+      this.validator = NULL_VALIDATOR;
     }
   }
 

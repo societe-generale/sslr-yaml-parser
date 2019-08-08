@@ -55,13 +55,11 @@ public class CommentChannel extends Channel<com.sonar.sslr.impl.Lexer> {
         String value = "";
         int line = code.getLinePosition();
         int column = code.getColumnPosition() - 1;
-        if (Lexer.NULL_OR_LINEBR_S.indexOf(code.charAt(0)) == -1) {
-            if (code.popTo(MATCHER, tmpBuilder) > 0) {
-                value = tmpBuilder.toString();
-                tmpBuilder.delete(0, tmpBuilder.length());
-                line = code.getPreviousCursor().getLine();
-                column = code.getPreviousCursor().getColumn() - 1;
-            }
+        if (Lexer.NULL_OR_LINEBR_S.indexOf(code.charAt(0)) == -1 && code.popTo(MATCHER, tmpBuilder) > 0) {
+            value = tmpBuilder.toString();
+            tmpBuilder.delete(0, tmpBuilder.length());
+            line = code.getPreviousCursor().getLine();
+            column = code.getPreviousCursor().getColumn() - 1;
         }
 
         Token token = tokenBuilder

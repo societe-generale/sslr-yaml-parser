@@ -152,8 +152,9 @@ public class YamlGrammarBuilderTest {
       yb.property("p1", b.integer())));
     b.setRootRule(ROOT);
 
-    parseText(yb, "{}");
-    // should not throw
+    JsonNode jsonNode = parseText(yb, "{}");
+
+    assertThat(jsonNode.is(ROOT)).isTrue();
   }
 
   @Test
@@ -172,18 +173,18 @@ public class YamlGrammarBuilderTest {
     b.rule(ROOT).is(yb.array(b.integer()));
     b.setRootRule(ROOT);
 
-    parseText(yb, "[]");
-    // should not throw
+    JsonNode jsonNode = parseText(yb, "[]");
+
+    assertThat(jsonNode.is(ROOT)).isTrue();
   }
 
+  @Test(expected = ValidationException.class)
   public void fails_if_missing_property() {
     b.rule(ROOT).is(yb.object(
       yb.mandatoryProperty("p1", b.integer())));
     b.setRootRule(ROOT);
 
     parseText(yb, "{}");
-
-    assertThat(issues).isNotEmpty();
   }
 
   @Test
