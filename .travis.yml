@@ -1,16 +1,25 @@
 language: java
-
-# Use container-based infrastructure:
 sudo: false
+install: true
+jdk: openjdk11
 
 # to keep Maven local repository between builds:
 cache:
   directories:
     - '$HOME/.m2/repository'
+    - '$HOME/.sonar'
+    - '$HOME/jvm'
+    - '$HOME/maven'
+
+before_cache:
+  - rm -rf $HOME/.m2/repository/com/societegenerale/sonar/sslr
+  - find $HOME/.m2 -name resolver-status.properties -exec rm {} \;
 
 notifications:
   email: false
 
-jdk: openjdk11
+addons:
+  sonarcloud:
+    organization: "societe-generale"
 
-script: mvn install -B -v -e
+script: "travis.sh"
