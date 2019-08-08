@@ -32,18 +32,34 @@ public interface ValidationRule {
 
   interface Context {
     /**
-     * Records and throws a violation of a rule.
+     * Records a violation of a rule with an ERROR level. Captured errors fail the validation in strict mode.
      * @param node the location of the violation
      * @param message the violation description
      * @param causes any other violations that may have caused or explain this violation
-     * @throws ValidationException in any case
      */
-    void recordFailure(JsonNode node, String message, ValidationIssue... causes) throws ValidationException;
+    void recordFailure(JsonNode node, String message, ValidationIssue... causes);
 
-    void recordWarning(JsonNode node, String message, ValidationIssue... causes) throws ValidationException;
+    /**
+     * Records a violation of a rule with a WARNING level. Captured warnings won't fail the validation but will be
+     * reported as violations.
+     * @param node the location of the violation
+     * @param message the violation description
+     * @param causes any other violations that may have caused or explain this violation
+     */
+    void recordWarning(JsonNode node, String message, ValidationIssue... causes);
 
+    /**
+     * Start capturing a new violation frame.
+     *
+     * @see #captured()
+     */
     void capture();
 
+    /**
+     * Get the warnings and errors captured in the current violation frame. Throws NoSuchElementException if called
+     * without a former call to {@link #capture()}.
+     * @return the list of captured warnings and errors
+     */
     List<ValidationIssue> captured();
   }
 }

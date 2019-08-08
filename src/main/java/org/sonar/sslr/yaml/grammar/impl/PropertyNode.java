@@ -33,10 +33,12 @@ public class PropertyNode extends JsonNode {
     super(type, name, token);
   }
 
+  @Override
   public JsonNode value() {
     return extractSiblingOf(VALUE);
   }
 
+  @Override
   public JsonNode key() {
     return extractSiblingOf(KEY);
   }

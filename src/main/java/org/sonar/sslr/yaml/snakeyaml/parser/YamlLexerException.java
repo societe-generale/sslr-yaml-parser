@@ -19,29 +19,41 @@
  */
 package org.sonar.sslr.yaml.snakeyaml.parser;
 
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.Mark;
 import com.sonar.sslr.impl.LexerException;
 import javax.annotation.Nullable;
 import org.sonar.sslr.channel.CodeBuffer;
 
 public class YamlLexerException extends LexerException {
-    private String context;
-    private CodeBuffer.Cursor contextMark;
-    private String problem;
-    private CodeBuffer.Cursor problemMark;
+    private final String context;
+    private final CodeBuffer.Cursor contextMark;
+    private final String problem;
+    private final CodeBuffer.Cursor problemMark;
 
     public YamlLexerException(@Nullable String context, @Nullable CodeBuffer.Cursor contextMark, String problem, CodeBuffer.Cursor problemMark) {
-        this(context, contextMark, problem, problemMark, null);
+        super(formatMessage(context, problem, problemMark));
+        this.context = context;
+        this.contextMark = clone(contextMark);
+        this.problem = problem;
+        this.problemMark = clone(problemMark);
     }
 
     public YamlLexerException(@Nullable String context, @Nullable CodeBuffer.Cursor contextMark, String problem, @Nullable CodeBuffer.Cursor problemMark, Throwable cause) {
-        super(context + "; " + problem + "; " + toString(problemMark), cause);
+        super(formatMessage(context, problem, problemMark), cause);
         this.context = context;
-        this.contextMark = contextMark == null ? null : contextMark.clone();
+        this.contextMark = clone(contextMark);
         this.problem = problem;
-        this.problemMark = problemMark == null ? null : problemMark.clone();
+        this.problemMark = clone(problemMark);
     }
 
+    private static CodeBuffer.Cursor clone(@Nullable CodeBuffer.Cursor contextMark) {
+        return contextMark == null ? null : contextMark.clone();
+    }
+
+    private static String formatMessage(@Nullable String context, String problem, @Nullable CodeBuffer.Cursor problemMark) {
+        return context + "; " + problem + "; " + toString(problemMark);
+    }
+
+    @Override
     public String toString() {
         StringBuilder lines = new StringBuilder();
         if (this.context != null) {

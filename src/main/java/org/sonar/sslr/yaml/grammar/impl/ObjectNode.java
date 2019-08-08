@@ -46,12 +46,13 @@ public class ObjectNode extends JsonNode {
   }
 
   @Override
-  protected JsonNode _at(JsonPointer ptr) {
+  protected JsonNode internalAt(JsonPointer ptr) {
     String propertyName = ptr.getMatchingProperty().replace("~1", "/").replace("~0", "~");
     JsonNode property = getJsonChildren(FLOW_PROPERTY, BLOCK_PROPERTY).stream().filter(n -> n.getFirstChild(SCALAR).getTokenValue().equals(propertyName)).findFirst().orElse(MissingNode.MISSING);
     return property.value();
   }
 
+  @Override
   public JsonNode get(String fieldName) {
     String pointer = Utils.escapeJsonPointer(fieldName);
     return this.at("/" + pointer);
@@ -112,6 +113,7 @@ public class ObjectNode extends JsonNode {
    *
    * @return the resolved node
    */
+  @Override
   public JsonNode resolve() {
     if (!isRef()) {
       return this;

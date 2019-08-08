@@ -25,11 +25,11 @@ import org.sonar.sslr.channel.Channel;
 import org.sonar.sslr.channel.CodeReader;
 
 class BlockEntryChannel extends Channel<Lexer> {
-    private final static String LINEBR_S = "\n\u0085\u2028\u2029";
-    private final static String FULL_LINEBR_S = "\r" + LINEBR_S;
-    private final static String NULL_OR_LINEBR_S = "\0" + FULL_LINEBR_S;
-    private final static String NULL_BL_LINEBR_S = " " + NULL_OR_LINEBR_S;
-    private final static String NULL_BL_T_LINEBR_S = "\t" + NULL_BL_LINEBR_S;
+    private static final String LINEBR_S = "\n\u0085\u2028\u2029";
+    private static final String FULL_LINEBR_S = "\r" + LINEBR_S;
+    private static final String NULL_OR_LINEBR_S = "\0" + FULL_LINEBR_S;
+    private static final String NULL_BL_LINEBR_S = " " + NULL_OR_LINEBR_S;
+    private static final String NULL_BL_T_LINEBR_S = "\t" + NULL_BL_LINEBR_S;
 
     private final LexerState state;
     private Token.Builder tokenBuilder = Token.builder();

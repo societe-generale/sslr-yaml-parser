@@ -20,7 +20,6 @@
 package org.sonar.sslr.yaml.grammar.impl;
 
 import com.google.common.collect.Sets;
-import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.Set;
@@ -46,7 +45,7 @@ public class NodeTypeValidation extends ValidationBase {
   @Override
   public String toString() {
     if (types.size() == 1) {
-      return types.stream().findFirst().get().toString();
+      return types.stream().map(Object::toString).findFirst().orElse("");
     } else {
       return "One of " + types;
     }

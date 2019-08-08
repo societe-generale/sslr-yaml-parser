@@ -25,6 +25,7 @@ import com.sonar.sslr.api.TokenType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 import org.sonar.sslr.channel.Channel;
 import org.sonar.sslr.channel.CodeBuffer;
 import org.sonar.sslr.channel.CodeReader;
@@ -69,6 +70,7 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
    *      Sequences</a>
    */
   private static final Map<Character, Integer> ESCAPE_CODES = new HashMap<>();
+  private static final String WHILE_SCANNING_BLOCK_SCALAR = "while scanning a block scalar";
 
   static {
     // ASCII null
@@ -150,19 +152,19 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
     state.allowSimpleKey(false);
 
     // Scan and add SCALAR.
-    boolean _double;
+    boolean isDoubleQuote;
     // The style will be either single- or double-quoted; we determine this
     // by the first character in the entry (supplied)
-    _double = style == '"';
+    isDoubleQuote = style == '"';
     StringBuilder chunks = new StringBuilder();
     StringBuilder originalChunks = new StringBuilder();
     CodeBuffer.Cursor startMark = code.getCursor().clone();
     char quote = code.charAt(0);
     code.pop(originalChunks);
-    chunks.append(scanFlowScalarNonSpaces(code, _double, startMark, originalChunks));
+    chunks.append(scanFlowScalarNonSpaces(code, isDoubleQuote, startMark, originalChunks));
     while (code.charAt(0) != quote) {
       chunks.append(scanFlowScalarSpaces(code, startMark, originalChunks));
-      chunks.append(scanFlowScalarNonSpaces(code, _double, startMark, originalChunks));
+      chunks.append(scanFlowScalarNonSpaces(code, isDoubleQuote, startMark, originalChunks));
     }
     code.pop(originalChunks);
     Token token = tokenBuilder
@@ -501,9 +503,9 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
     if ("null".equals(value)) {
       return Tokens.NULL;
     }
-    TokenType B = matchYAMLBoolean(value, len);
-    if (B != null) {
-      return B;
+    TokenType tokenType = matchYAMLBoolean(value, len);
+    if (tokenType != null) {
+      return tokenType;
     }
     return Tokens.STRING;
   }
@@ -548,6 +550,9 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
         if ("false".equalsIgnoreCase(value)) {
           return Tokens.FALSE;
         }
+        break;
+      default:
+        return null;
     }
 
     return null;
@@ -711,18 +716,14 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
       if (Character.isDigit(ch)) {
         increment = Integer.parseInt(String.valueOf(ch));
         if (increment == 0) {
-          throw new YamlLexerException("while scanning a block scalar", startMark,
-            "expected indentation indicator in the range 1-9, but found 0",
-            reader.getCursor());
+          throw makeScalarIndentException(reader, startMark);
         }
         reader.pop(originalChunks);
       }
     } else if (Character.isDigit(ch)) {
       increment = Integer.parseInt(String.valueOf(ch));
       if (increment == 0) {
-        throw new YamlLexerException("while scanning a block scalar", startMark,
-          "expected indentation indicator in the range 1-9, but found 0",
-          reader.getCursor());
+        throw makeScalarIndentException(reader, startMark);
       }
       reader.pop(originalChunks);
       ch = reader.charAt(0);
@@ -737,10 +738,16 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
     }
     ch = reader.charAt(0);
     if (Lexer.NULL_BL_LINEBR_S.indexOf(ch) == -1) {
-      throw new YamlLexerException("while scanning a block scalar", startMark, "expected chomping or indentation indicator but found " + ch,
+      throw new YamlLexerException(WHILE_SCANNING_BLOCK_SCALAR, startMark, "expected chomping or indentation indicator but found " + ch,
         reader.getCursor());
     }
     return new Chomping(chomping, increment);
+  }
+
+  private static YamlLexerException makeScalarIndentException(CodeReader reader, CodeBuffer.Cursor startMark) {
+    return new YamlLexerException(WHILE_SCANNING_BLOCK_SCALAR, startMark,
+      "expected indentation indicator in the range 1-9, but found 0",
+      reader.getCursor());
   }
 
   /**
@@ -759,7 +766,7 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
     String lineBreak = scanLineBreak(reader);
     originalChunks.append(lineBreak);
     if (lineBreak.length() == 0 && ch != '\0') {
-      throw new YamlLexerException("while scanning a block scalar", startMark,
+      throw new YamlLexerException(WHILE_SCANNING_BLOCK_SCALAR, startMark,
         "expected a comment or a line break, but found " + ch, reader.getCursor());
     }
   }
@@ -834,7 +841,7 @@ class ScalarChannel extends Channel<com.sonar.sslr.impl.Lexer> {
     private final Boolean value;
     private final int increment;
 
-    Chomping(Boolean value, int increment) {
+    Chomping(@Nullable Boolean value, int increment) {
       this.value = value;
       this.increment = increment;
     }

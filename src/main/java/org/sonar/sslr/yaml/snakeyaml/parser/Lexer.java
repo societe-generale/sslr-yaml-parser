@@ -25,11 +25,11 @@ import com.sonar.sslr.impl.channel.UnknownCharacterChannel;
 import java.nio.charset.Charset;
 
 public abstract class Lexer {
-    protected final static String LINEBR_S = "\n\u0085\u2028\u2029\uFFFF";
-    private final static String FULL_LINEBR_S = "\r" + LINEBR_S;
-    protected final static String NULL_OR_LINEBR_S = "\0" + FULL_LINEBR_S;
-    protected final static String NULL_BL_LINEBR_S = " " + NULL_OR_LINEBR_S;
-    protected final static String NULL_BL_T_LINEBR_S = "\t" + NULL_BL_LINEBR_S;
+    protected static final String LINEBR_S = "\n\u0085\u2028\u2029\uFFFF";
+    private static final String FULL_LINEBR_S = "\r" + LINEBR_S;
+    protected static final String NULL_OR_LINEBR_S = "\0" + FULL_LINEBR_S;
+    protected static final String NULL_BL_LINEBR_S = " " + NULL_OR_LINEBR_S;
+    protected static final String NULL_BL_T_LINEBR_S = "\t" + NULL_BL_LINEBR_S;
 
     private Lexer() {
         // hidden utility class constructor

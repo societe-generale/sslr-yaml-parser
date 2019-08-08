@@ -29,36 +29,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.Nullable;
-import org.sonar.sslr.yaml.grammar.impl.ArrayNode;
 import org.sonar.sslr.yaml.grammar.impl.MissingNode;
-import org.sonar.sslr.yaml.grammar.impl.ObjectNode;
-import org.sonar.sslr.yaml.grammar.impl.PropertyNode;
-import org.sonar.sslr.yaml.grammar.impl.ScalarNode;
-import org.sonar.sslr.yaml.grammar.impl.SyntaxNode;
 
 import static org.sonar.sslr.yaml.grammar.YamlGrammar.BLOCK_ARRAY_ELEMENT;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.BLOCK_MAPPING;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.BLOCK_PROPERTY;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.BLOCK_SEQUENCE;
 import static org.sonar.sslr.yaml.grammar.YamlGrammar.FLOW_ARRAY_ELEMENT;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.FLOW_MAPPING;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.FLOW_PROPERTY;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.FLOW_SEQUENCE;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.INDENTLESS_SEQUENCE;
 import static org.sonar.sslr.yaml.grammar.YamlGrammar.ROOT;
-import static org.sonar.sslr.yaml.grammar.YamlGrammar.SCALAR;
 import static org.sonar.sslr.yaml.grammar.impl.MissingNode.MISSING;
 import static org.sonar.sslr.yaml.snakeyaml.parser.Tokens.KEY;
 import static org.sonar.sslr.yaml.snakeyaml.parser.Tokens.VALUE;
 
 
 public abstract class JsonNode extends AstNode {
-  private final AstNodeType originalType;
+  private static final String EMPTY_STRING = "";
+  private static final double DEFAULT_FLOAT_VALUE = 0.0;
+  private static final int DEFAULT_INT_VALUE = 0;
   private String pointer;
 
   protected JsonNode(AstNodeType type, String name, @Nullable Token token) {
     super(type, name, token);
-    originalType = type;
   }
 
   /**
@@ -79,7 +67,7 @@ public abstract class JsonNode extends AstNode {
     if (pointer.matches()) {
       return this;
     } else {
-      JsonNode n = _at(pointer);
+      JsonNode n = internalAt(pointer);
       if (n == null) {
         return MISSING;
       }
@@ -282,7 +270,7 @@ public abstract class JsonNode extends AstNode {
    * @return the value, or an empty string for non-scalars
    */
   public String stringValue() {
-    return "";
+    return EMPTY_STRING;
   }
 
   /**
@@ -298,7 +286,7 @@ public abstract class JsonNode extends AstNode {
    * @return the value, or {@code 0.0} for non-scalars
    */
   public double floatValue() {
-    return 0.0;
+    return DEFAULT_FLOAT_VALUE;
   }
 
   /**
@@ -306,10 +294,15 @@ public abstract class JsonNode extends AstNode {
    * @return the value, or {@code 0} for non-scalars
    */
   public int intValue() {
-    return 0;
+    return DEFAULT_INT_VALUE;
   }
 
-  protected JsonNode _at(JsonPointer ptr) {
+  /**
+   * Internally resolve a local json pointer.
+   * @param ptr the json pointer (expected to be local to the node)
+   * @return a non-null JsonNode
+   */
+  protected JsonNode internalAt(JsonPointer ptr) {
     return MISSING;
   }
 

@@ -20,7 +20,6 @@
 package org.sonar.sslr.yaml.grammar;
 
 import com.sonar.sslr.api.AstNode;
-import com.sonar.sslr.api.RecognitionException;
 
 public class ParsingException extends RuntimeException {
   public AstNode getErrorNode() {

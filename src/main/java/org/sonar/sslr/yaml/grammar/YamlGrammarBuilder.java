@@ -219,11 +219,7 @@ public class YamlGrammarBuilder {
    * @return the builder, for continuation
    */
   public GrammarRuleBuilder rule(GrammarRuleKey ruleKey) {
-    RuleDefinition rule = this.definitions.get(ruleKey);
-    if (rule == null) {
-      rule = new RuleDefinition(ruleKey);
-      definitions.put(ruleKey, rule);
-    }
+    RuleDefinition rule = definitions.computeIfAbsent(ruleKey, RuleDefinition::new);
     return new RuleBuilder(this, rule);
   }
 

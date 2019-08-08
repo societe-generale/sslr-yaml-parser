@@ -47,7 +47,7 @@ public class ArrayNode extends JsonNode {
   }
 
   @Override
-  protected JsonNode _at(JsonPointer ptr) {
+  protected JsonNode internalAt(JsonPointer ptr) {
     int index = ptr.getMatchingIndex();
     int i=0;
     for (AstNode child: getChildren(FLOW_ARRAY_ELEMENT, BLOCK_ARRAY_ELEMENT)) {

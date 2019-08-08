@@ -19,26 +19,14 @@
  */
 package org.sonar.sslr.yaml.grammar;
 
-import com.sonar.sslr.api.AstNode;
-import com.sonar.sslr.api.Grammar;
-import com.sonar.sslr.api.RecognitionException;
-import com.sonar.sslr.api.Rule;
-import com.sonar.sslr.impl.LexerException;
-import com.sonar.sslr.impl.Parser;
-import java.nio.charset.Charset;
 import javax.annotation.Nullable;
 import org.sonar.sslr.grammar.GrammarRuleKey;
 import org.sonar.sslr.grammar.LexerfulGrammarBuilder;
-import org.sonar.sslr.internal.vm.CompilableGrammarRule;
-import org.sonar.sslr.internal.vm.CompiledGrammar;
-import org.sonar.sslr.internal.vm.Machine;
-import org.sonar.sslr.internal.vm.MutableGrammarCompiler;
 import org.sonar.sslr.yaml.grammar.impl.ArrayNode;
 import org.sonar.sslr.yaml.grammar.impl.ObjectNode;
 import org.sonar.sslr.yaml.grammar.impl.PropertyNode;
 import org.sonar.sslr.yaml.grammar.impl.ScalarNode;
 import org.sonar.sslr.yaml.grammar.impl.SyntaxNode;
-import org.sonar.sslr.yaml.snakeyaml.parser.Lexer;
 import org.sonar.sslr.yaml.snakeyaml.parser.Tokens;
 
 import static com.sonar.sslr.api.GenericTokenType.EOF;

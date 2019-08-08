@@ -33,15 +33,24 @@ public class TokenValueValidationTest extends ValidationTestBase {
   public ExpectedException exception = ExpectedException.none();
 
   @Test
-  public void matches_any_scalar() {
+  public void matches_any_string() {
     TokenValueValidation textual = new TokenValueValidation("some string");
-    textual.visit(parseText("some string"), context);
+    boolean valid = textual.visit(parseText("some string"), context);
+    assertThat(valid).isTrue();
+  }
 
+  @Test
+  public void matches_any_float() {
     TokenValueValidation numeric = new TokenValueValidation("42.036");
-    numeric.visit(parseText("42.036"), context);
+    boolean valid = numeric.visit(parseText("42.036"), context);
+    assertThat(valid).isTrue();
+  }
 
+  @Test
+  public void matches_any_boolean() {
     TokenValueValidation bool = new TokenValueValidation("yes");
-    bool.visit(parseText("yes"), context);
+    boolean valid = bool.visit(parseText("yes"), context);
+    assertThat(valid).isTrue();
   }
 
   @Test
