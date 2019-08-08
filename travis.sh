@@ -9,47 +9,59 @@ function installTravisTools {
 }
 installTravisTools
 
-# https://github.com/SonarSource/sonarqube/blob/6.4-RC3/travis.sh#L57-L110
-function fixBuildVersion {
-  export INITIAL_VERSION=`maven_expression "project.version"`
-
-  # remove suffix -SNAPSHOT or -RC
-  without_suffix=`echo $INITIAL_VERSION | sed "s/-.*//g"`
-
-  IFS=$'.'
-  fields_count=`echo $without_suffix | wc -w`
-  unset IFS
-  if [ $fields_count -lt 3 ]; then
-    export BUILD_VERSION="$without_suffix.0.$TRAVIS_BUILD_NUMBER"
-  else
-    export BUILD_VERSION="$without_suffix.$TRAVIS_BUILD_NUMBER"
-  fi
-
-  if [[ "${INITIAL_VERSION}" == *"-SNAPSHOT" ]]; then
-    # SNAPSHOT
-    export PROJECT_VERSION=$BUILD_VERSION
-    mvn org.codehaus.mojo:versions-maven-plugin:2.2:set -DnewVersion=$PROJECT_VERSION -DgenerateBackupPoms=false -B -e
-  else
-    # not a SNAPSHOT: milestone, RC or GA
-    export PROJECT_VERSION=$INITIAL_VERSION
-  fi
-
-  echo "Build Version  : $BUILD_VERSION"
-  echo "Project Version: $PROJECT_VERSION"
-}
+. ~/.local/bin/installMaven35
 
 if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-  git fetch --unshallow || true
+  echo '======== Build and analyze master'
+  # Analyze with SNAPSHOT version as long as SQ does not correctly handle
+  # purge of release data
+  CURRENT_VERSION=`maven_expression "project.version"`
 
-  fixBuildVersion
+  . set_maven_build_version $TRAVIS_BUILD_NUMBER
 
-  mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy sonar:sonar \
-      -Pcoverage-per-test,deploy-sonarsource,release \
+  mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar \
+      -Pcoverage \
+      -Dmaven.test.redirectTestOutputToFile=false \
       -Dsonar.host.url=$SONAR_HOST_URL \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.projectVersion=$INITIAL_VERSION \
-      -B -e -V
+      -Dsonar.projectVersion=$CURRENT_VERSION \
+      -Dsonar.analysis.buildNumber=$TRAVIS_BUILD_NUMBER \
+      -Dsonar.analysis.pipeline=$TRAVIS_BUILD_NUMBER \
+      -Dsonar.analysis.sha1=$TRAVIS_COMMIT \
+      -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG \
+      -Dsonar.projectKey=societe-generale_sslr-yaml-parser \
+      -B -v -e $*
 
+elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+  echo '======= Build and analyze pull request'
+
+  # Do not deploy a SNAPSHOT version but the release version related to this build and PR
+  . set_maven_build_version $TRAVIS_BUILD_NUMBER
+
+  mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar \
+      -Pcoverage \
+      -Dmaven.test.redirectTestOutputToFile=false \
+      -Dsonar.host.url=$SONAR_HOST_URL \
+      -Dsonar.login=$SONAR_TOKEN \
+      -Dsonar.analysis.buildNumber=$TRAVIS_BUILD_NUMBER \
+      -Dsonar.analysis.pipeline=$TRAVIS_BUILD_NUMBER \
+      -Dsonar.analysis.sha1=$TRAVIS_COMMIT \
+      -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG \
+      -Dsonar.analysis.prNumber=$TRAVIS_PULL_REQUEST \
+      -Dsonar.pullrequest.branch=$TRAVIS_PULL_REQUEST_BRANCH \
+      -Dsonar.pullrequest.base=$TRAVIS_BRANCH \
+      -Dsonar.pullrequest.key=$TRAVIS_PULL_REQUEST \
+      -Dsonar.pullrequest.provider=github \
+      -Dsonar.pullrequest.github.repository=$TRAVIS_REPO_SLUG \
+      -Dsonar.projectKey=societe-generale_sslr-yaml-parser \
+      -B -v -e $*
 else
-  regular_mvn_build_deploy_analyze
+  echo '======= Build, no analysis, no deploy'
+
+  # No need for Maven phase "install" as the generated JAR files do not need to be installed
+  # in Maven local repository. Phase "verify" is enough.
+
+  mvn verify \
+      -Dmaven.test.redirectTestOutputToFile=false \
+      -B -e -V $*
 fi
