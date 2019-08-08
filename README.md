@@ -1,4 +1,4 @@
-# Sonar YAML Grammar builder [![Build Status](https://travis-ci.org/societe-generale/sslr-yaml-parser.svg?branch=master)](https://travis-ci.org/societe-generale/sslr-yaml-parser)
+# Sonar YAML Grammar builder [![Build Status](https://travis-ci.org/societe-generale/sslr-yaml-parser.svg?branch=master)](https://travis-ci.org/societe-generale/sslr-yaml-parser) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=societe-generale_sslr-yaml-parser&metric=alert_status)](https://sonarcloud.io/dashboard?id=societe-generale_sslr-yaml-parser)
 
 Sonar YAML Grammar builder is a Sonar SSLR extension to build grammars based on JSON/YAML documents. 
 
