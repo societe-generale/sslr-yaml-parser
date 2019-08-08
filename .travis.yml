@@ -22,4 +22,6 @@ addons:
   sonarcloud:
     organization: "societe-generale"
 
-script: "chmod a+x ./travis.sh && ./travis.sh"
+#script: "chmod a+x ./travis.sh && ./travis.sh"
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=societe-generale_sslr-yaml-parser
