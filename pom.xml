@@ -11,7 +11,7 @@
 
     <groupId>com.societegenerale.sonar.sslr</groupId>
     <artifactId>sslr-yaml-parser</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.1</version>
 
     <name>Sonar SSLR :: YAML Parser</name>
     <description>Parser and grammar generator toolkit for YAML-based domain languages</description>
@@ -49,7 +49,7 @@
         <url>https://github.com/societe-generale/sslr-yaml-parser</url>
         <connection>scm:git:git@github.com:societe-generale/sslr-yaml-parser.git</connection>
         <developerConnection>scm:git:git@github.com:societe-generale/sslr-yaml-parser.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>sslr_yaml_parser_1.2.1</tag>
     </scm>
 
     <repositories>
