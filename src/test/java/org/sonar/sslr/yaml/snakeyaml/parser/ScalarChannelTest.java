@@ -185,6 +185,17 @@ public class ScalarChannelTest {
   }
 
   @Test
+  public void double_quotes_encodes_newline() {
+    String original = "\"Some\\nexplicit line break\"";
+    List<Token> tokens = lexer.lex(original);
+
+    assertThat(tokens).hasSize(2); // for EOF
+    Token token = tokens.get(0);
+    assertEquals("Some\nexplicit line break", token.getValue());
+    assertEquals("\"Some\\nexplicit line break\"", token.getOriginalValue());
+  }
+
+  @Test
   public void single_quoted() {
     List<Token> tokens = lexer.lex("'Some text ''in quotes'''");
 
